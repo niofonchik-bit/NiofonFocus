@@ -1,0 +1,40 @@
+:root[data-theme='dark'] {
+    --background-primary: #0c0c0e;
+    
+    --text-primary: #ececea;
+}
+
+:root[data-theme='light'] {
+    --background-primary: #f4f4f1;
+
+    --text-primary: #1c1c1a;
+}
+
+:root {
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    --background-primary: #0c0c0e;
+    --text-primary: #ececea;
+}
+
+html,
+body,
+#root {
+    min-height: 100%;
+}
+
+*, *::after, *::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background-color: var(--background-primary);
+    color: var(--text-primary);
+    font-family: "Hanken Grotesk", system-ui, sans-serif;
+}
