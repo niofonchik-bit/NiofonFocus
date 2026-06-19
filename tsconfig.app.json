@@ -21,13 +21,14 @@
         "erasableSyntaxOnly": true,
         "noFallthroughCasesInSwitch": true,
 
-        "baseUrl": ".",
         "paths": {
-            "@api/*": ["src/api/*"],
-            "@providers/*": ["src/providers/*"],
-            "@components/*": ["src/components/*"],
-            "@app_types/*": ["src/types/*"],
-            "@root/*": ["src/*"],
+            "@api/*": ["./src/api/*"],
+            "@providers/*": ["./src/providers/*"],
+            "@components/*": ["./src/components/*"],
+            "@pages/*": ["./src/pages/*"],
+            "@layouts/*": ["./src/layouts/*"],
+            "@app_types/*": ["./src/types/*"],
+            "@root/*": ["./src/*"],
             "@project/*": ["./*"]
         }
     },

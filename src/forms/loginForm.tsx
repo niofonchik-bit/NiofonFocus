@@ -1,6 +1,13 @@
 import { useState, type FormEvent } from 'react';
-import { Box, Stack, TextField, Button, Alert, Typography } from '@mui/material';
-import { signIn, translateAuthError } from '../../api/auth';
+import {
+    Box,
+    Stack,
+    TextField,
+    Button,
+    Alert,
+    Typography,
+} from '@mui/material';
+import { signIn, translateAuthError } from '@api/auth';
 
 export default function LoginForm() {
     const [email, setEmail] = useState('');
@@ -12,11 +19,15 @@ export default function LoginForm() {
         event.preventDefault();
         setError(null);
         setLoading(true);
-        
+
         try {
             await signIn({ email, password });
         } catch (err) {
-            setError(translateAuthError(err instanceof Error ? err.message : String(err)));
+            setError(
+                translateAuthError(
+                    err instanceof Error ? err.message : String(err),
+                ),
+            );
         } finally {
             setLoading(false);
         }

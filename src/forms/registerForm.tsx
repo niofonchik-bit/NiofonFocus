@@ -1,6 +1,13 @@
 import { useState, type FormEvent } from 'react';
-import { Box, Stack, TextField, Button, Alert, Typography } from '@mui/material';
-import { signUp, translateAuthError } from '../../api/auth';
+import {
+    Box,
+    Stack,
+    TextField,
+    Button,
+    Alert,
+    Typography,
+} from '@mui/material';
+import { signUp, translateAuthError } from '@api/auth';
 
 export default function RegisterForm() {
     const [email, setEmail] = useState('');
@@ -30,21 +37,23 @@ export default function RegisterForm() {
             // подтверждение email включено → сессии нет, ждём письмо
             // подтверждение выключено → сессия есть, onAuthChange в App сам переключит экран
             if (!data.session) {
-                setInfo('Аккаунт создан. Подтвердите email по ссылке из письма.');
+                setInfo(
+                    'Аккаунт создан. Подтвердите email по ссылке из письма.',
+                );
             }
         } catch (err) {
-            setError(translateAuthError(err instanceof Error ? err.message : String(err)));
+            setError(
+                translateAuthError(
+                    err instanceof Error ? err.message : String(err),
+                ),
+            );
         } finally {
             setLoading(false);
         }
     }
 
     return (
-        <Box
-            component='form'
-            onSubmit={handleSubmit}
-            sx={{ width: '100%' }}
-        >
+        <Box component='form' onSubmit={handleSubmit} sx={{ width: '100%' }}>
             <Stack spacing={2}>
                 <Typography variant='h5'>Регистрация</Typography>
                 {error && <Alert severity='error'>{error}</Alert>}

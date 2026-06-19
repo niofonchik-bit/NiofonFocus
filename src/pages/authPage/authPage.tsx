@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Box, Stack, Button } from '@mui/material';
-import LoginForm from '../forms/loginForm';
-import RegisterForm from '../forms/registerForm';
+import LoginForm from '../../forms/loginForm';
+import RegisterForm from '../../forms/registerForm';
 
 export default function AuthPage() {
     const [mode, setMode] = useState<'login' | 'register'>('login');

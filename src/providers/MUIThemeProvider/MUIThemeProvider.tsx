@@ -2,7 +2,12 @@ import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import React from 'react';
 import { useAnimatedTheme } from '../animatedThemeProvider/animatedThemeProvider';
 
-export default function MUIThemeProvider({ children }: { children: React.ReactNode }) {
+/** провайдер темы MUI */
+export default function MUIThemeProvider({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
     const { theme } = useAnimatedTheme();
 
     const muiTheme = React.useMemo(

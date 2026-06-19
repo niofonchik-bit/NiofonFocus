@@ -1,15 +1,16 @@
+import '@project/index.css';
+import AnimatedThemeProvider from '@providers/animatedThemeProvider/animatedThemeProvider';
+import MUIThemeProvider from '@providers/muiThemeProvider/muiThemeProvider';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import '@project/index.css';
-import MUIThemeProvider from '@providers/MUIThemeProvider/MUIThemeProvider';
-import AnimatedThemeProvider from '@providers/animatedThemeProvider/animatedThemeProvider';
-import App from '@root/App';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './route';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <AnimatedThemeProvider storageKey='niofon_focus_theme'>
             <MUIThemeProvider>
-                <App />
+                <RouterProvider router={router} />
             </MUIThemeProvider>
         </AnimatedThemeProvider>
     </StrictMode>,
