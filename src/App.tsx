@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
-import { getSession, onAuthChange, signOut } from './api/auth';
-import { getProfile } from './api/profile';
-import AuthPage from './components/pages/authPage';
+import { getSession, onAuthChange, signOut } from '@api/auth';
+import { getProfile } from '@api/profile';
+import AuthPage from '@components/pages/authPage';
+import ThemeToggleButton from '@components/themeToggleButton/themeToggleButton';
 
 export default function App() {
     const [session, setSession] = useState<Session | null>(null);
@@ -32,6 +33,7 @@ export default function App() {
 
     return (
         <main className='page'>
+            <ThemeToggleButton />
             <p>Вы вошли как {session.user.email}</p>
             <p>Имя в профиле: {displayName ?? '—'}</p>
             <button onClick={signOut}>Выйти</button>

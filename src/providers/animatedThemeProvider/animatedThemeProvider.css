@@ -1,0 +1,45 @@
+/*
+* отключение стандартного crossfaed View Transition API.
+* Ripple-анимация запускается через Web Animations API.
+*/
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+    z-index: 1;
+}
+
+::view-transition-new(root) {
+    z-index: 2;
+}
+
+/*
+  * отключение CSS transition на время ripple анимации.
+  *
+  * иначе компонент может самостоятельно менять background/color,
+  * и новый снимок будет сделан в промежуточном состоянии
+  */
+html[data-theme-transition='active'],
+html[data-theme-transition='active'] body,
+html[data-theme-transition='active'] body *,
+html[data-theme-transition='active'] body *::before,
+html[data-theme-transition='active'] body *::after {
+    transition: none !important;
+}
+
+/*
+ * отключение view-transition-name на время смены темы
+ *
+ * иначе отдельный элемент может оказаться вне общего ripple root
+ */
+html[data-theme-transition='active'] body * {
+    view-transition-name: none !important;
+}
