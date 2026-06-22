@@ -5,10 +5,12 @@ import { useAuth } from '@providers/authProvider/authProvider';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 
+/** главная страница */
 export default function HomePage() {
     const { session } = useAuth();
     const [displayName, setDisplayName] = useState<string | null>(null);
 
+    // загрузка имени профиля
     useEffect(() => {
         if (!session) {
             setDisplayName(null);

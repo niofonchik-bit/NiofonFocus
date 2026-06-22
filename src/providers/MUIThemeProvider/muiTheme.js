@@ -1,3 +1,4 @@
+/** стили автозаполнения */
 const autofillStyles = {
     '&:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active, &:autofill': {
         WebkitBoxShadow:
@@ -8,6 +9,7 @@ const autofillStyles = {
     },
 };
 
+/** тема компонентов mui */
 export default {
     components: {
         MuiInputBase: {

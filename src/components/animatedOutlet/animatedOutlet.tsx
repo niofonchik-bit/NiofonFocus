@@ -58,6 +58,7 @@ type AnimatedOutletProps = {
     getDirection?: (context: DirectionContext) => TransitionDirection;
 };
 
+/** поиск маршрута перехода */
 function findTransitionRoute(pathname: string, routes: PageTransitionRoute[]) {
     return routes
         .filter((route) => {
@@ -74,12 +75,14 @@ function findTransitionRoute(pathname: string, routes: PageTransitionRoute[]) {
         })[0];
 }
 
+/** получение параметров перехода */
 function getTransitionOptions(location: RouterLocation) {
     return (
         (location.state as TransitionLocationState | null)?.pageTransition ?? {}
     );
 }
 
+/** проверка уменьшения движения */
 function useReducedMotion() {
     const [reducedMotion, setReducedMotion] = useState(false);
     useEffect(() => {
@@ -103,6 +106,7 @@ function useReducedMotion() {
     return reducedMotion;
 }
 
+/** анимированный выход маршрута */
 export default function AnimatedOutlet({
     routes = [],
     fallback = null,
@@ -190,6 +194,7 @@ export default function AnimatedOutlet({
             route: latestValues.currentRoute,
         };
 
+        // проверка отключения анимации
         const shouldReduceMotion =
             latestValues.disabled ||
             (latestValues.respectReducedMotion &&
@@ -223,6 +228,7 @@ export default function AnimatedOutlet({
             });
         }
 
+        // определение направления перехода
         if (!direction) {
             if (
                 previousPage.location.pathname ===
@@ -246,6 +252,7 @@ export default function AnimatedOutlet({
             }
         }
 
+        // определение пресета перехода
         let preset: TransitionPreset;
 
         if (direction === 'back') {
@@ -262,6 +269,7 @@ export default function AnimatedOutlet({
                 'slide';
         }
 
+        // определение точки начала перехода
         const originY =
             direction === 'back'
                 ? previousOptions.originY ??

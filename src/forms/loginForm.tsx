@@ -9,12 +9,14 @@ import {
 } from '@mui/material';
 import { signIn, translateAuthError } from '@api/auth';
 
+/** форма входа */
 export default function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
+    /** отправка формы входа */
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setError(null);

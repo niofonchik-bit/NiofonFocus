@@ -11,6 +11,7 @@ import {
 } from 'react-router-dom';
 import App from './App';
 
+/** загрузчик страницы */
 function PageLoader() {
     return (
         <Box
@@ -25,6 +26,7 @@ function PageLoader() {
     );
 }
 
+/** защищенный маршрут */
 function ProtectedRoute() {
     const { ready, session } = useAuth();
     const location = useLocation();
@@ -38,6 +40,7 @@ function ProtectedRoute() {
     return <Outlet />;
 }
 
+/** публичный маршрут */
 function PublicOnlyRoute() {
     const { ready, session } = useAuth();
 
@@ -50,6 +53,7 @@ function PublicOnlyRoute() {
     return <Outlet />;
 }
 
+/** маршруты приложения */
 export const router = createBrowserRouter([
     {
         path: '/',
