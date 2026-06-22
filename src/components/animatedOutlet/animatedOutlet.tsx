@@ -1,11 +1,6 @@
 import type { CSSProperties } from '@mui/material';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import {
-    matchPath,
-    useLocation,
-    useNavigationType,
-    useOutlet,
-} from 'react-router-dom';
+import { useLocation, useMatches, useNavigationType, useOutlet } from 'react-router-dom';
 import './animatedOutlet.css';
 
 type RouterLocation = ReturnType<typeof useLocation>;
@@ -14,11 +9,13 @@ type RouterNavigationType = ReturnType<typeof useNavigationType>;
 export type TransitionDirection = 'forward' | 'back' | 'refresh';
 export type TransitionPreset = 'slide' | 'scale' | 'fade';
 
-export type PageTransitionRoute = {
-    path: string;
+export type PageTransitionMeta = {
     level: number;
     preset?: TransitionPreset;
-    end?: boolean;
+};
+
+export type PageTransitionHandle = {
+    pageTransition?: PageTransitionMeta;
 };
 
 type TransitionOptions = {
@@ -35,19 +32,18 @@ type TransitionSnapshot = {
     key: string;
     outlet: ReactNode;
     location: RouterLocation;
-    route?: PageTransitionRoute;
+    route?: PageTransitionMeta;
 };
 
 type DirectionContext = {
     previousLocation: RouterLocation;
     nextLocation: RouterLocation;
     navigationType: RouterNavigationType;
-    previousRoute?: PageTransitionRoute;
-    nextRoute?: PageTransitionRoute;
+    previousRoute?: PageTransitionMeta;
+    nextRoute?: PageTransitionMeta;
 };
 
 type AnimatedOutletProps = {
-    routes?: PageTransitionRoute[];
     fallback?: ReactNode;
     className?: string;
     exitDuration?: number;
@@ -57,23 +53,6 @@ type AnimatedOutletProps = {
     getKey?: (location: RouterLocation) => string;
     getDirection?: (context: DirectionContext) => TransitionDirection;
 };
-
-/** поиск маршрута перехода */
-function findTransitionRoute(pathname: string, routes: PageTransitionRoute[]) {
-    return routes
-        .filter((route) => {
-            return matchPath(
-                {
-                    path: route.path,
-                    end: route.end ?? true,
-                },
-                pathname,
-            );
-        })
-        .sort((first, second) => {
-            return second.path.length - first.path.length;
-        })[0];
-}
 
 /** получение параметров перехода */
 function getTransitionOptions(location: RouterLocation) {
@@ -108,7 +87,6 @@ function useReducedMotion() {
 
 /** анимированный выход маршрута */
 export default function AnimatedOutlet({
-    routes = [],
     fallback = null,
     className,
     exitDuration = 200,
@@ -124,7 +102,15 @@ export default function AnimatedOutlet({
     const reducedMotion = useReducedMotion();
 
     const locationKey = getKey(location);
-    const currentRoute = findTransitionRoute(location.pathname, routes);
+    
+    const matches = useMatches();
+
+    const currentRoute = [...matches]
+        .reverse()
+        .map((match) => {
+            return match.handle as PageTransitionHandle | undefined;
+        })
+        .find((handle) => handle?.pageTransition)?.pageTransition;
 
     const [displayedPage, setDisplayedPage] = useState<TransitionSnapshot>(
         () => ({

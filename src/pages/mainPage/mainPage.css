@@ -1,0 +1,42 @@
+:root[data-theme='light'] {
+    --main-page-background-gradient: radial-gradient(
+        1200px 600px at 78% -10%,
+        color-mix(in srgb, #7c5cfc 9%, transparent),
+        transparent 70%
+    );
+}
+
+:root[data-theme='dark'] {
+    --main-page-background-gradient: radial-gradient(
+        1200px 600px at 78% -10%,
+        color-mix(in srgb, #7c5cfc 16%, transparent),
+        transparent 70%
+    );
+}
+
+.main_page {
+    display: grid;
+    grid-template-columns: 248px minmax(0, 1fr);
+    height: 100dvh;
+    overflow: hidden;
+    background-color: var(--background-primary);
+    background-image: var(--main-page-background-gradient);
+    background-attachment: fixed;
+}
+
+.main_page_content {
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+@media (max-width: 880px) {
+    .main_page {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1fr) auto;
+    }
+
+    .main_page_content {
+        grid-row: 1;
+    }
+}

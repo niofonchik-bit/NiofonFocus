@@ -1,8 +1,7 @@
-import { getProfile } from '@api/profile';
 import { signOut } from '@api/auth';
-import ThemeToggleButton from '@components/themeToggleButton/themeToggleButton';
-import { useAuth } from '@providers/authProvider/authProvider';
+import { getProfile } from '@api/profile';
 import { Box, Button, Stack, Typography } from '@mui/material';
+import { useAuth } from '@providers/authProvider/authProvider';
 import { useEffect, useState } from 'react';
 
 /** главная страница */
@@ -27,8 +26,7 @@ export default function HomePage() {
     return (
         <Box sx={{ p: 3 }}>
             <Stack spacing={2} sx={{ alignItems: 'flex-start' }}>
-                <ThemeToggleButton />
-                <Typography variant='h5'>Главная</Typography>
+                <Typography variant='h5'>Дашборд</Typography>
                 <Typography>Вы вошли как {session.user.email}</Typography>
                 <Typography>
                     Имя в профиле: {displayName ?? 'не указано'}

@@ -1,15 +1,10 @@
-import AppLayout from '@layouts/appLayout';
+import type { PageTransitionHandle } from '@components/animatedOutlet/animatedOutlet';
 import { Box, CircularProgress } from '@mui/material';
 import AuthPage from '@pages/authPage/authPage';
 import HomePage from '@pages/homePage/homePage';
+import MainPage from '@pages/mainPage/mainPage';
 import { useAuth } from '@providers/authProvider/authProvider';
-import {
-    createBrowserRouter,
-    Navigate,
-    Outlet,
-    useLocation,
-} from 'react-router-dom';
-import App from './App';
+import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router-dom';
 
 /** загрузчик страницы */
 function PageLoader() {
@@ -26,15 +21,23 @@ function PageLoader() {
     );
 }
 
-/** защищенный маршрут */
+/** защищённый маршрут */
 function ProtectedRoute() {
     const { ready, session } = useAuth();
     const location = useLocation();
 
-    if (!ready) return <PageLoader />;
+    if (!ready) {
+        return <PageLoader />;
+    }
 
     if (!session) {
-        return <Navigate to='/auth' replace state={{ from: location }} />;
+        return (
+            <Navigate
+                to='/auth'
+                replace
+                state={{ from: location }}
+            />
+        );
     }
 
     return <Outlet />;
@@ -44,10 +47,17 @@ function ProtectedRoute() {
 function PublicOnlyRoute() {
     const { ready, session } = useAuth();
 
-    if (!ready) return <PageLoader />;
+    if (!ready) {
+        return <PageLoader />;
+    }
 
     if (session) {
-        return <Navigate to='/' replace />;
+        return (
+            <Navigate
+                to='/'
+                replace
+            />
+        );
     }
 
     return <Outlet />;
@@ -56,41 +66,49 @@ function PublicOnlyRoute() {
 /** маршруты приложения */
 export const router = createBrowserRouter([
     {
-        path: '/',
-        element: <App />,
+        element: <PublicOnlyRoute />,
         children: [
             {
-                element: <PublicOnlyRoute />,
-                children: [
-                    {
-                        path: 'auth',
-                        element: <AuthPage />,
-                    },
-                ],
-            },
-            {
-                element: <ProtectedRoute />,
-                children: [
-                    {
-                        path: '/',
-                        element: <AppLayout />,
-                        children: [
-                            {
-                                index: true,
-                                element: <HomePage />,
-                            },
-                            {
-                                path: 'settings',
-                                element: <div>Settings</div>,
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                path: '*',
-                element: <Navigate to='/' replace />,
+                path: '/auth',
+                element: <AuthPage />,
             },
         ],
+    },
+    {
+        element: <ProtectedRoute />,
+        children: [
+            {
+                element: <MainPage />,
+                children: [
+                    {
+                        index: true,
+                        element: <HomePage />,
+                        handle: {
+                            pageTransition: {
+                                level: 0,
+                            },
+                        } satisfies PageTransitionHandle,
+                    },
+                    {
+                        path: 'settings',
+                        element: <div>Settings</div>,
+                        handle: {
+                            pageTransition: {
+                                level: 1,
+                            },
+                        } satisfies PageTransitionHandle,
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        path: '*',
+        element: (
+            <Navigate
+                to='/'
+                replace
+            />
+        ),
     },
 ]);
