@@ -1,3 +1,4 @@
+/* светлая тема */
 :root[data-theme='light'] {
     color-scheme: light;
 
@@ -24,6 +25,7 @@
         0 4px 14px rgba(17, 17, 22, 0.08);
 }
 
+/* темная тема */
 :root[data-theme='dark'] {
     color-scheme: dark;
 
@@ -49,6 +51,7 @@
         0 6px 18px rgba(0, 0, 0, 0.4);
 }
 
+/* базовые настройки документа */
 :root {
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -64,6 +67,7 @@ body,
     color: var(--text-primary);
 }
 
+/* сброс отступов элементов */
 *, *::after, *::before {
     margin: 0;
     padding: 0;

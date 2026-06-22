@@ -9,13 +9,16 @@ import {
     type ReactNode,
 } from 'react';
 
+/** значение контекста авторизации */
 type AuthContextValue = {
     session: Session | null;
     ready: boolean;
 };
 
+/** контекст авторизации */
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+/** провайдер авторизации */
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [session, setSession] = useState<Session | null>(null);
     const [ready, setReady] = useState(false);
@@ -58,6 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 }
 
+/** доступ к авторизации */
 export function useAuth() {
     const context = useContext(AuthContext);
 

@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { signUp, translateAuthError } from '@api/auth';
 
+/** форма регистрации */
 export default function RegisterForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -17,6 +18,7 @@ export default function RegisterForm() {
     const [info, setInfo] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
+    /** отправка формы регистрации */
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setError(null);
@@ -34,8 +36,7 @@ export default function RegisterForm() {
         setLoading(true);
         try {
             const data = await signUp({ email, password });
-            // подтверждение email включено → сессии нет, ждём письмо
-            // подтверждение выключено → сессия есть, onAuthChange в App сам переключит экран
+            // проверка необходимости подтверждения email
             if (!data.session) {
                 setInfo(
                     'Аккаунт создан. Подтвердите email по ссылке из письма.',

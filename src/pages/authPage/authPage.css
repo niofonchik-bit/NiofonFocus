@@ -1,3 +1,4 @@
+/* страница авторизации */
 .auth_page {
     --auth-accent: var(--accent-primary, #7c5cfc);
     --auth-accent-contrast: var(--accent-contrast, #ffffff);
@@ -43,6 +44,7 @@
     z-index: 20;
 }
 
+/* карточка авторизации */
 .auth_page_card {
     position: relative;
     width: min(960px, 100%);
@@ -59,6 +61,7 @@
         both;
 }
 
+/* форма авторизации */
 .auth_page_form {
     position: absolute;
     top: 0;
@@ -81,6 +84,7 @@
     pointer-events: none;
 }
 
+/* смещение формы входа */
 .auth_page_card_register .auth_page_form_login {
     z-index: 1;
     opacity: 0;
@@ -88,6 +92,7 @@
     transform: translateX(100%);
 }
 
+/* смещение формы регистрации */
 .auth_page_card_register .auth_page_form_register {
     z-index: 5;
     opacity: 1;
@@ -368,6 +373,7 @@
     vertical-align: baseline;
 }
 
+/* обертка оверлея авторизации */
 .auth_page_overlay_wrapper {
     position: absolute;
     top: 0;

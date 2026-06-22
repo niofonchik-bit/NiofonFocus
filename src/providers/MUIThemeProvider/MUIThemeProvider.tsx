@@ -3,7 +3,7 @@ import React from 'react';
 import { useAnimatedTheme } from '../animatedThemeProvider/animatedThemeProvider';
 import MUITheme from './muiTheme.js';
 
-/** провайдер темы MUI */
+/** провайдер темы mui */
 export default function MUIThemeProvider({
     children,
 }: {

@@ -33,13 +33,14 @@ type AuthFormProps = {
     onChangeMode: (mode: AuthMode) => void;
 };
 
-/** Форма входа */
+/** форма входа */
 function LoginForm({ active, isLoading, onLoadingChange, onChangeMode }: AuthFormProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [status, setStatus] = useState<AuthStatus>(null);
 
+    /** отправка формы входа */
     async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
         setStatus(null);
@@ -212,7 +213,7 @@ function LoginForm({ active, isLoading, onLoadingChange, onChangeMode }: AuthFor
     );
 }
 
-/** Форма регистрации */
+/** форма регистрации */
 function RegisterForm({ active, isLoading, onLoadingChange, onChangeMode }: AuthFormProps) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -225,6 +226,7 @@ function RegisterForm({ active, isLoading, onLoadingChange, onChangeMode }: Auth
 
     const passwordStrengthLabel = ['', 'Слабый пароль', 'Средний пароль', 'Надёжный пароль'][passwordStrength];
 
+    /** отправка формы регистрации */
     async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
         setStatus(null);
@@ -482,11 +484,12 @@ function RegisterForm({ active, isLoading, onLoadingChange, onChangeMode }: Auth
     );
 }
 
-/** Страница входа и регистрации */
+/** страница входа и регистрации */
 export default function AuthPage() {
     const [mode, setMode] = useState<AuthMode>('login');
     const [isLoading, setIsLoading] = useState(false);
 
+    /** изменение режима авторизации */
     function changeMode(nextMode: AuthMode) {
         if (isLoading) {
             return;

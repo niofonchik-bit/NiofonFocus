@@ -1,15 +1,18 @@
 import type { Session } from '@supabase/supabase-js';
 import { supabase } from '@root/lib/supabase';
 
+/** учетные данные пользователя */
 interface Credentials {
     email: string;
     password: string;
 }
 
+/** учетные данные регистрации */
 interface SignUpCredentials extends Credentials {
     displayName: string;
 }
 
+/** авторизация пользователя */
 export async function signIn({ email, password }: Credentials) {
     const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -21,6 +24,7 @@ export async function signIn({ email, password }: Credentials) {
     return data;
 }
 
+/** регистрация пользователя */
 export async function signUp({ email, password, displayName }: SignUpCredentials) {
     const { data, error } = await supabase.auth.signUp({
         email,
@@ -37,18 +41,21 @@ export async function signUp({ email, password, displayName }: SignUpCredentials
     return data;
 }
 
+/** выход пользователя */
 export async function signOut(): Promise<void> {
     const { error } = await supabase.auth.signOut();
 
     if (error) throw error;
 }
 
+/** получение текущей сессии */
 export async function getSession(): Promise<Session | null> {
     const { data } = await supabase.auth.getSession();
 
     return data.session;
 }
 
+/** подписка на изменение авторизации */
 export function onAuthChange(callback: (session: Session | null) => void): () => void {
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
         callback(session);
@@ -57,6 +64,7 @@ export function onAuthChange(callback: (session: Session | null) => void): () =>
     return () => data.subscription.unsubscribe();
 }
 
+/** перевод ошибки авторизации */
 export function translateAuthError(message: string): string {
     if (message.includes('Invalid login credentials')) {
         return 'Неверный e-mail или пароль';
