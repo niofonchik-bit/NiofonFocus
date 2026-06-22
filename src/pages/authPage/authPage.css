@@ -365,12 +365,18 @@
 .auth_page_switch .MuiButton-root {
     min-width: 0;
     padding: 0;
+    margin-left: 5px;
     color: var(--auth-accent);
     font-size: inherit;
     font-weight: 650;
     line-height: inherit;
     text-transform: none;
     vertical-align: baseline;
+}
+
+.auth_page_switch .MuiButton-root:hover {
+    text-decoration: underline;
+    background-color: transparent;
 }
 
 /* обертка оверлея авторизации */
