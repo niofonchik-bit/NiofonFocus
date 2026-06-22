@@ -1,5 +1,5 @@
 .main_menu {
-    --main-menu-accent: #7c5cfc;
+    --main-menu-accent: var(--accent-primary);
     --main-menu-surface-secondary: color-mix(
         in srgb,
         var(--text-primary) 6%,

@@ -4,7 +4,7 @@ import './animatedThemeProvider.css';
 
 export type ThemeMode = 'light' | 'dark';
 
-type ThemeOrigin =
+export type ThemeOrigin =
     | React.MouseEvent<HTMLElement>
     | MouseEvent
     | HTMLElement
@@ -25,7 +25,7 @@ type DocumentWithViewTransition = Document & {
 
 type AnimatedThemeContextValue = {
     theme: ThemeMode;
-    setTheme: (theme: ThemeMode, origin?: ThemeOrigin) => void;
+    setTheme: (theme: ThemeMode, origin?: ThemeOrigin, animate?: boolean) => void;
     toggleTheme: (origin?: ThemeOrigin) => void;
 };
 
@@ -120,7 +120,7 @@ export default function AnimatedThemeProvider({
 
     /** изменение темы */
     const setTheme = React.useCallback(
-        (nextTheme: ThemeMode, origin?: ThemeOrigin) => {
+        (nextTheme: ThemeMode, origin?: ThemeOrigin, animate = true) => {
             if (themeRef.current === nextTheme) return;
 
             const root = document.documentElement;
@@ -148,11 +148,13 @@ export default function AnimatedThemeProvider({
 
                     return;
                 }
+
+                setThemeState(nextTheme);
             }
 
             activeTransitionRef.current?.skipTransition();
 
-            if (!startViewTransition || prefersReducedMotion) {
+            if (!animate || !startViewTransition || prefersReducedMotion) {
                 delete root.dataset.themeTransition;
                 applyTheme(false);
                 return;

@@ -1,7 +1,8 @@
 import type { PageTransitionHandle } from '@components/animatedOutlet/animatedOutlet';
 import { Box, CircularProgress } from '@mui/material';
 import AuthPage from '@pages/authPage/authPage';
-import HomePage from '@pages/homePage/homePage';
+import HomePage from '@pages/dashboardPage/dashboardPage';
+import HabitPage from '@pages/habitPage/habitPage';
 import MainPage from '@pages/mainPage/mainPage';
 import { useAuth } from '@providers/authProvider/authProvider';
 import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router-dom';
@@ -88,6 +89,15 @@ export const router = createBrowserRouter([
                                 level: 0,
                             },
                         } satisfies PageTransitionHandle,
+                    },
+                    {
+                        path: 'habits',
+                        element: <HabitPage />,
+                        handle: {
+                            pageTransition: {
+                                level: 1,
+                            },
+                        }
                     },
                     {
                         path: 'settings',

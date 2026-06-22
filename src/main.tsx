@@ -6,16 +6,19 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './route';
+import SettingsProvider from '@providers/settingsProvider/settingsProvider';
 
 // подключение дерева react
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <AnimatedThemeProvider storageKey='niofon_focus_theme'>
-            <MUIThemeProvider>
-                <AuthProvider>
-                    <RouterProvider router={router} />
-                </AuthProvider>
-            </MUIThemeProvider>
+            <AuthProvider>
+                <SettingsProvider accentStorageKey='niofon_focus_accent'>
+                    <MUIThemeProvider>
+                        <RouterProvider router={router} />
+                    </MUIThemeProvider>
+                </SettingsProvider>
+            </AuthProvider>
         </AnimatedThemeProvider>
     </StrictMode>,
 );
