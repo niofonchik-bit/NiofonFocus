@@ -1,6 +1,7 @@
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import React from 'react';
 import { useAnimatedTheme } from '../animatedThemeProvider/animatedThemeProvider';
+import MUITheme from './muiTheme.js';
 
 /** провайдер темы MUI */
 export default function MUIThemeProvider({
@@ -13,8 +14,10 @@ export default function MUIThemeProvider({
     const muiTheme = React.useMemo(
         () =>
             createTheme({
+                ...MUITheme,
                 palette: {
                     mode: theme,
+                    ...MUITheme.palette,
                 },
             }),
         [theme],

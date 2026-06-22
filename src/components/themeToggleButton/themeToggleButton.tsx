@@ -19,7 +19,6 @@ export default function ThemeToggleButton({ onClick, ...props }: IconButtonProps
         <IconButton
             {...props}
             onClick={handleClick}
-            aria-label='Переключить тему'
         >
             <SvgIcon>
                 <path d={theme === 'light' ? mdiWeatherNight : mdiWhiteBalanceSunny} />
