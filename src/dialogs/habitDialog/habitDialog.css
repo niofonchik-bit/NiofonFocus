@@ -1,0 +1,346 @@
+.habit_dialog_overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: color-mix(in srgb, #08080c 48%, transparent);
+    backdrop-filter: blur(4px);
+    animation: habit_dialog_fade 0.2s ease both;
+}
+
+.habit_dialog {
+    width: 100%;
+    max-width: 460px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 28px;
+    background: var(--surface-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: 18px;
+    box-shadow: var(--shadow-elevated);
+    animation: habit_dialog_in 0.34s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.habit_dialog_heading {
+    margin: 0 0 4px;
+    font-size: 21px;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+}
+
+.habit_dialog_sub {
+    margin: 0 0 20px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.habit_dialog_preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 14px;
+    border-radius: 10px;
+    background: var(--surface-secondary);
+}
+
+.habit_dialog_preview_icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+}
+
+.habit_dialog_preview_icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.habit_dialog_preview_text {
+    min-width: 0;
+    flex: 1;
+}
+
+.habit_dialog_preview_title {
+    overflow: hidden;
+    font-size: 15px;
+    font-weight: 650;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--text-primary);
+}
+
+.habit_dialog_preview_schedule {
+    font-size: 12.5px;
+    color: var(--text-disabled);
+}
+
+.habit_dialog_field {
+    margin-bottom: 16px;
+}
+
+.habit_dialog_field > label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.habit_dialog_input {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid var(--border-primary);
+    border-radius: 10px;
+    background: var(--surface-secondary);
+    color: var(--text-primary);
+    font: inherit;
+    transition: border-color 0.16s, background 0.16s;
+}
+
+.habit_dialog_input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    background: var(--surface-primary);
+}
+
+.habit_dialog_input::placeholder {
+    color: var(--text-disabled);
+}
+
+.habit_dialog_swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.habit_dialog_swatch {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.14s ease;
+}
+
+.habit_dialog_swatch:hover {
+    transform: scale(1.12);
+}
+
+.habit_dialog_swatch_selected {
+    box-shadow: 0 0 0 2px var(--surface-primary), 0 0 0 4px currentColor;
+}
+
+.habit_dialog_swatch svg {
+    position: absolute;
+    inset: 0;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    color: #fff;
+}
+
+.habit_dialog_icons {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.habit_dialog_icon {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    border: 1px solid var(--border-primary);
+    border-radius: 10px;
+    background: var(--surface-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.14s ease;
+}
+
+.habit_dialog_icon svg {
+    width: 19px;
+    height: 19px;
+}
+
+.habit_dialog_icon:hover {
+    color: var(--text-primary);
+    border-color: var(--text-disabled);
+}
+
+.habit_dialog_icon_selected {
+    background: var(--accent-primary);
+    color: var(--accent-contrast);
+    border-color: transparent;
+}
+
+.habit_dialog_freq {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.habit_dialog_freq button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px;
+    border: 1px solid var(--border-primary);
+    border-radius: 10px;
+    background: var(--surface-secondary);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.16s, color 0.16s, border-color 0.16s;
+}
+
+.habit_dialog_freq button svg {
+    width: 15px;
+    height: 15px;
+}
+
+.habit_dialog_freq button:hover {
+    color: var(--text-primary);
+    border-color: var(--text-disabled);
+}
+
+.habit_dialog_freq_on {
+    background: color-mix(in srgb, var(--accent-primary) 12%, transparent) !important;
+    color: var(--accent-primary) !important;
+    border-color: color-mix(in srgb, var(--accent-primary) 40%, transparent) !important;
+}
+
+.habit_dialog_days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.habit_dialog_day {
+    aspect-ratio: 1;
+    border: 1px solid var(--border-primary);
+    border-radius: 10px;
+    background: var(--surface-secondary);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: background 0.14s, color 0.14s, border-color 0.14s;
+}
+
+.habit_dialog_day:hover {
+    color: var(--text-primary);
+    border-color: var(--text-disabled);
+}
+
+.habit_dialog_day_on {
+    background: var(--accent-primary);
+    color: var(--accent-contrast);
+    border-color: transparent;
+}
+
+.habit_dialog_hint {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: #e0533d;
+}
+
+.habit_dialog_actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.habit_dialog_button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.habit_dialog_button svg {
+    width: 18px;
+    height: 18px;
+}
+
+.habit_dialog_button:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.habit_dialog_button_ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border-color: var(--border-primary);
+}
+
+.habit_dialog_button_primary {
+    background: var(--accent-primary);
+    color: var(--accent-contrast);
+}
+
+@keyframes habit_dialog_fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes habit_dialog_in {
+    from { opacity: 0; transform: translateY(18px) scale(0.96); }
+    to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .habit_dialog_overlay,
+    .habit_dialog { animation: none; }
+}
+
+@media (max-width: 520px) {
+    .habit_dialog_icons { grid-template-columns: repeat(6, 1fr); }
+}
+
+
+.habit_dialog_small { max-width: 400px; }
+
+.habit_dialog_sub_tight { margin-bottom: 0; }
+
+.habit_delete_head {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.habit_delete_icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: color-mix(in srgb, #e0533d 14%, transparent);
+    color: #e0533d;
+}
+
+.habit_delete_icon svg { width: 20px; height: 20px; }
+
+.habit_dialog_button_danger {
+    background: color-mix(in srgb, #e0533d 14%, transparent);
+    color: #e0533d;
+}
+
+.habit_dialog_button_danger:hover {
+    background: color-mix(in srgb, #e0533d 22%, transparent);
+}

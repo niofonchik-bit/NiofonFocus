@@ -1,4 +1,13 @@
-import { getHabits, type Habit } from '@api/habits';
+import {
+    createHabit as createHabitRequest,
+    deleteHabit as deleteHabitRequest,
+    getHabits,
+    toggleCompletion as toggleCompletionRequest,
+    updateHabit as updateHabitRequest,
+    type Habit,
+    type HabitPatch,
+    type NewHabit,
+} from '@api/habits';
 import { useAuth } from '@providers/authProvider/authProvider';
 import { getHabitStatistics, type HabitStatistics } from '@root/scripts/utilities';
 import React from 'react';
@@ -9,19 +18,20 @@ interface HabitsProviderProps {
 
 /** состояние коллекции привычек */
 interface HabitsCollectionState {
+    habits: Habit[];
     loading: boolean;
     error: Error | null;
-    revision: number;
+    reload: () => void;
 }
 
 /** действия с привычками */
 interface HabitsActions {
-    getHabits: () => Habit[];
-    updateCompletion: (habitId: string, date: string, completed: boolean) => void;
-    reload: () => void;
+    toggleCompletion: (habitId: string, date: string) => Promise<boolean>;
+    createHabit: (input: NewHabit) => Promise<Habit>;
+    updateHabit: (habitId: string, patch: HabitPatch) => Promise<Habit>;
+    removeHabit: (habitId: string) => Promise<void>;
 }
 
-/** пустая статистика привычек */
 const EMPTY_STATISTICS: HabitStatistics = {
     totalCount: 0,
     completedTodayCount: 0,
@@ -29,149 +39,70 @@ const EMPTY_STATISTICS: HabitStatistics = {
 };
 
 const HabitsCollectionContext = React.createContext<HabitsCollectionState | null>(null);
-
 const HabitsStatisticsContext = React.createContext<HabitStatistics | null>(null);
-
 const HabitsActionsContext = React.createContext<HabitsActions | null>(null);
+
+/** установка отметки привычки на дату (без мутации) */
+function setHabitCompletion(habit: Habit, date: string, completed: boolean): Habit {
+    const has = habit.completions.includes(date);
+
+    if (has === completed) {
+        return habit;
+    }
+
+    return {
+        ...habit,
+        completions: completed ? [...habit.completions, date] : habit.completions.filter((value) => value !== date),
+    };
+}
 
 /** провайдер привычек */
 export default function HabitsProvider({ children }: HabitsProviderProps) {
     const { session } = useAuth();
-
-    /** актуальный список без подписки карточек на его изменение */
-    const habitsRef = React.useRef<Habit[]>([]);
-
-    /** состояние активного запроса без зависимости от рендера */
-    const loadingRef = React.useRef(true);
-
-    const [collectionState, setCollectionState] = React.useState<HabitsCollectionState>({
-        loading: true,
-        error: null,
-        revision: 0,
-    });
-
-    const [statistics, setStatistics] = React.useState<HabitStatistics>(EMPTY_STATISTICS);
-
-    const [reloadVersion, setReloadVersion] = React.useState(0);
-
     const userId = session?.user.id;
 
-    /**
-     * объект действий создаётся один раз.
-     * карточки подписываются только на него, а не на статистику
-     */
-    const [actions] = React.useState<HabitsActions>(() => ({
-        getHabits: () => habitsRef.current,
+    const [habits, setHabits] = React.useState<Habit[]>([]);
+    const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState<Error | null>(null);
+    const [reloadVersion, setReloadVersion] = React.useState(0);
 
-        updateCompletion: (habitId, date, completed) => {
-            const habit = habitsRef.current.find((currentHabit) => currentHabit.id === habitId);
+    /** актуальный список для чтения внутри действий без гонок */
+    const habitsRef = React.useRef<Habit[]>([]);
 
-            if (!habit) {
-                return;
-            }
-
-            const currentlyCompleted = habit.completions.includes(date);
-
-            if (currentlyCompleted === completed) {
-                return;
-            }
-
-            habitsRef.current = habitsRef.current.map((currentHabit) => {
-                if (currentHabit.id !== habitId) {
-                    return currentHabit;
-                }
-
-                return {
-                    ...currentHabit,
-                    completions: completed
-                        ? [...currentHabit.completions, date]
-                        : currentHabit.completions.filter((completionDate) => completionDate !== date),
-                };
-            });
-
-            setStatistics(getHabitStatistics(habitsRef.current));
-        },
-
-        reload: () => {
-            if (loadingRef.current) {
-                return;
-            }
-
-            loadingRef.current = true;
-
-            setCollectionState((currentState) => ({
-                ...currentState,
-                loading: true,
-                error: null,
-            }));
-
-            setReloadVersion((currentVersion) => currentVersion + 1);
-        },
-    }));
+    React.useEffect(() => {
+        habitsRef.current = habits;
+    }, [habits]);
 
     // загрузка привычек пользователя
     React.useEffect(() => {
         let active = true;
 
         if (!userId) {
-            habitsRef.current = [];
-            loadingRef.current = false;
-
-            setStatistics(EMPTY_STATISTICS);
-
-            setCollectionState((currentState) => ({
-                loading: false,
-                error: null,
-                revision: currentState.revision + 1,
-            }));
-
+            setHabits([]);
+            setError(null);
+            setLoading(false);
             return;
         }
 
-        loadingRef.current = true;
-
-        setCollectionState((currentState) => ({
-            ...currentState,
-            loading: true,
-            error: null,
-        }));
+        setLoading(true);
+        setError(null);
 
         void getHabits(userId)
-            .then((loadedHabits) => {
-                if (!active) {
-                    return;
+            .then((loaded) => {
+                if (active) {
+                    setHabits(loaded);
                 }
-
-                habitsRef.current = loadedHabits;
-
-                setStatistics(getHabitStatistics(loadedHabits));
-
-                setCollectionState((currentState) => ({
-                    loading: false,
-                    error: null,
-                    revision: currentState.revision + 1,
-                }));
             })
             .catch((requestError: unknown) => {
-                if (!active) {
-                    return;
-                }
+                if (!active) return;
 
-                habitsRef.current = [];
-                setStatistics(EMPTY_STATISTICS);
-
-                setCollectionState((currentState) => ({
-                    loading: false,
-                    error: requestError instanceof Error ? requestError : new Error('Не удалось загрузить привычки'),
-                    revision: currentState.revision + 1,
-                }));
+                setHabits([]);
+                setError(requestError instanceof Error ? requestError : new Error('Не удалось загрузить привычки'));
             })
             .finally(() => {
-                if (!active) {
-                    return;
+                if (active) {
+                    setLoading(false);
                 }
-
-                loadingRef.current = false;
             });
 
         return () => {
@@ -179,10 +110,80 @@ export default function HabitsProvider({ children }: HabitsProviderProps) {
         };
     }, [userId, reloadVersion]);
 
+    const reload = React.useCallback(() => {
+        setReloadVersion((version) => version + 1);
+    }, []);
+
+    const collection = React.useMemo<HabitsCollectionState>(() => ({ habits, loading, error, reload }), [habits, loading, error, reload]);
+
+    const statistics = React.useMemo(() => (habits.length ? getHabitStatistics(habits) : EMPTY_STATISTICS), [habits]);
+
+    const actions = React.useMemo<HabitsActions>(
+        () => ({
+            toggleCompletion: async (habitId, date) => {
+                const current = habitsRef.current.find((habit) => habit.id === habitId);
+
+                if (!current) {
+                    return false;
+                }
+
+                const nextCompleted = !current.completions.includes(date);
+
+                // оптимистичное изменение
+                setHabits((previous) => previous.map((habit) => (habit.id === habitId ? setHabitCompletion(habit, date, nextCompleted) : habit)));
+
+                try {
+                    const saved = await toggleCompletionRequest(habitId, date);
+
+                    // приведение к серверной правде, если разошлось
+                    if (saved !== nextCompleted) {
+                        setHabits((previous) => previous.map((habit) => (habit.id === habitId ? setHabitCompletion(habit, date, saved) : habit)));
+                    }
+
+                    return saved;
+                } catch (requestError) {
+                    // откат оптимистичного изменения
+                    setHabits((previous) =>
+                        previous.map((habit) => (habit.id === habitId ? setHabitCompletion(habit, date, !nextCompleted) : habit)),
+                    );
+
+                    throw requestError;
+                }
+            },
+
+            createHabit: async (input) => {
+                if (!userId) {
+                    throw new Error('Пользователь не авторизован');
+                }
+
+                const created = await createHabitRequest(userId, input);
+
+                setHabits((previous) => [created, ...previous]);
+
+                return created;
+            },
+
+            updateHabit: async (habitId, patch) => {
+                const updated = await updateHabitRequest(habitId, patch);
+
+                setHabits((previous) => previous.map((habit) => (habit.id === habitId ? updated : habit)));
+
+                return updated;
+            },
+
+            removeHabit: async (habitId) => {
+                await deleteHabitRequest(habitId);
+
+                setHabits((previous) => previous.filter((habit) => habit.id !== habitId));
+            },
+        }),
+        [userId],
+    );
+
     return (
         <HabitsActionsContext.Provider value={actions}>
             <HabitsStatisticsContext.Provider value={statistics}>
-                <HabitsCollectionContext.Provider value={collectionState}>{children}</HabitsCollectionContext.Provider>
+                <HabitsCollectionContext.Provider value={collection}>{children}</HabitsCollectionContext.Provider>
             </HabitsStatisticsContext.Provider>
         </HabitsActionsContext.Provider>
     );
@@ -190,21 +191,13 @@ export default function HabitsProvider({ children }: HabitsProviderProps) {
 
 /** доступ к коллекции привычек */
 export function useHabitsCollection() {
-    const collectionState = React.useContext(HabitsCollectionContext);
+    const context = React.useContext(HabitsCollectionContext);
 
-    const actions = React.useContext(HabitsActionsContext);
-
-    if (!collectionState || !actions) {
+    if (!context) {
         throw new Error('useHabitsCollection должен использоваться внутри HabitsProvider');
     }
 
-    return {
-        habits: actions.getHabits(),
-        loading: collectionState.loading,
-        error: collectionState.error,
-        revision: collectionState.revision,
-        reload: actions.reload,
-    };
+    return context;
 }
 
 /** доступ к статистике привычек */

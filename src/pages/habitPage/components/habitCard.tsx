@@ -1,13 +1,13 @@
-import { toggleCompletion, type Habit } from '@api/habits';
+import { type Habit } from '@api/habits';
 import PathIcon from '@components/pathIcon/pathIcon';
+import { getHabitIconPath } from '@constants/habitIcons';
+import { clearCelebration, playCelebration } from '@effects/celebration/celebration';
+import '@effects/celebration/celebration.css';
 import { mdiCheck, mdiDeleteOutline, mdiDotsVertical, mdiFire, mdiPencilOutline } from '@mdi/js';
 import { Button, CircularProgress, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material';
 import { useHabitActions } from '@providers/habitsProvider/habitsProvider';
-import { getHabitIconPath } from '@constants/habitIcons';
 import { getCurrentStreak, getDateKey, getHabitWeek, getStreakLabel, isHabitScheduled } from '@scripts/utilities';
 import React from 'react';
-import { clearCelebration, playCelebration } from '@effects/celebration/celebration';
-import '@effects/celebration/celebration.css';
 
 interface HabitCardProps {
     habit: Habit;
@@ -19,9 +19,8 @@ const POP_ANIMATION_MS = 1000;
 
 /** карточка привычки */
 export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
-    const { updateCompletion } = useHabitActions();
+    const { toggleCompletion } = useHabitActions();
 
-    const [currentHabit, setCurrentHabit] = React.useState(habit);
     const [pending, setPending] = React.useState(false);
     const [requestFailed, setRequestFailed] = React.useState(false);
     const [completionAnimation, setCompletionAnimation] = React.useState(false);
@@ -32,14 +31,10 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
 
     const currentDate = new Date();
     const todayKey = getDateKey(currentDate);
-    const completedToday = currentHabit.completions.includes(todayKey);
-    const scheduledToday = isHabitScheduled(currentHabit, currentDate);
-    const streak = getCurrentStreak(currentHabit);
-    const week = getHabitWeek(currentHabit, currentDate);
-
-    React.useEffect(() => {
-        setCurrentHabit(habit);
-    }, [habit]);
+    const completedToday = habit.completions.includes(todayKey);
+    const scheduledToday = isHabitScheduled(habit, currentDate);
+    const streak = getCurrentStreak(habit);
+    const week = getHabitWeek(habit, currentDate);
 
     React.useEffect(() => {
         return () => {
@@ -48,24 +43,6 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
             }
         };
     }, []);
-
-    /** изменение локальной отметки за сегодня */
-    function setTodayCompletion(completed: boolean) {
-        setCurrentHabit((previousHabit) => {
-            const currentlyCompleted = previousHabit.completions.includes(todayKey);
-
-            if (currentlyCompleted === completed) {
-                return previousHabit;
-            }
-
-            return {
-                ...previousHabit,
-                completions: completed
-                    ? [...previousHabit.completions, todayKey]
-                    : previousHabit.completions.filter((completionDate) => completionDate !== todayKey),
-            };
-        });
-    }
 
     /** запуск анимации выполнения */
     function startCompletionAnimation() {
@@ -93,10 +70,6 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
         setPending(true);
         setRequestFailed(false);
 
-        setTodayCompletion(nextCompleted);
-
-        updateCompletion(currentHabit.id, todayKey, nextCompleted);
-
         if (nextCompleted) {
             startCompletionAnimation();
         } else {
@@ -104,23 +77,14 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
         }
 
         try {
-            const savedCompleted = await toggleCompletion(currentHabit.id, todayKey);
+            const saved = await toggleCompletion(habit.id, todayKey);
 
-            if (savedCompleted !== nextCompleted) {
-                setTodayCompletion(savedCompleted);
-
-                updateCompletion(currentHabit.id, todayKey, savedCompleted);
-
-                if (!savedCompleted) {
-                    setCompletionAnimation(false);
-                    clearCelebration(effectsLayerRef.current);
-                }
+            // сервер не подтвердил выполнение — снимаем анимацию
+            if (!saved) {
+                setCompletionAnimation(false);
+                clearCelebration(effectsLayerRef.current);
             }
         } catch {
-            setTodayCompletion(completedToday);
-
-            updateCompletion(currentHabit.id, todayKey, completedToday);
-
             setCompletionAnimation(false);
             clearCelebration(effectsLayerRef.current);
             setRequestFailed(true);
@@ -142,19 +106,19 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
     /** редактирование привычки */
     function handleEdit() {
         handleCloseMenu();
-        onEdit?.(currentHabit);
+        onEdit?.(habit);
     }
 
     /** удаление привычки */
     function handleDelete() {
         handleCloseMenu();
-        onDelete?.(currentHabit);
+        onDelete?.(habit);
     }
 
     return (
         <article
             className='habit_card'
-            style={{ '--habit-color': currentHabit.color, '--celebration-color': currentHabit.color } as React.CSSProperties}
+            style={{ '--habit-color': habit.color, '--celebration-color': habit.color } as React.CSSProperties}
         >
             <span
                 ref={effectsLayerRef}
@@ -164,11 +128,11 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
 
             <div className='habit_card_header'>
                 <span className='habit_card_icon'>
-                    <PathIcon path={getHabitIconPath(currentHabit.icon)} />
+                    <PathIcon path={getHabitIconPath(habit.icon)} />
                 </span>
 
                 <div className='habit_card_information'>
-                    <h2 className='habit_card_title'>{currentHabit.title}</h2>
+                    <h2 className='habit_card_title'>{habit.title}</h2>
 
                     <div className='habit_card_streak'>
                         <PathIcon path={mdiFire} />
@@ -179,8 +143,8 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
 
                 <IconButton
                     className={['habit_card_menu_button', menuAnchor ? 'habit_card_menu_button_open' : ''].filter(Boolean).join(' ')}
-                    aria-label={`Действия привычки ${currentHabit.title}`}
-                    aria-controls={menuAnchor ? `habit_card_menu_${currentHabit.id}` : undefined}
+                    aria-label={`Действия привычки ${habit.title}`}
+                    aria-controls={menuAnchor ? `habit_card_menu_${habit.id}` : undefined}
                     aria-haspopup='menu'
                     aria-expanded={menuAnchor ? 'true' : undefined}
                     onClick={handleOpenMenu}
@@ -190,7 +154,7 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
             </div>
 
             <Menu
-                id={`habit_card_menu_${currentHabit.id}`}
+                id={`habit_card_menu_${habit.id}`}
                 anchorEl={menuAnchor}
                 open={Boolean(menuAnchor)}
                 onClose={handleCloseMenu}
@@ -209,7 +173,7 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
                     },
                     list: {
                         className: 'habit_card_menu_list',
-                        'aria-label': `Действия привычки ${currentHabit.title}`,
+                        'aria-label': `Действия привычки ${habit.title}`,
                     },
                 }}
             >
