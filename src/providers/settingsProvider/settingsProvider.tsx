@@ -15,6 +15,7 @@ type SettingsContextValue = {
     changeSettings: (changes: SettingsChanges, origin?: ThemeOrigin) => Promise<void>;
     changeTheme: (theme: ThemeMode, origin?: ThemeOrigin) => Promise<void>;
     toggleTheme: (origin?: ThemeOrigin) => Promise<void>;
+    previewAccent: (accent: AccentName) => void;
     changeAccent: (accent: AccentName) => Promise<void>;
 };
 
@@ -57,6 +58,12 @@ export default function SettingsProvider({ children, accentStorageKey = 'niofon_
 
     const [accent, setAccent] = React.useState<AccentName>(() => getInitialAccent());
 
+    /** актуальный акцент без ожидания рендера */
+    const accentRef = React.useRef(accent);
+
+    /** тема, явно выбранная пользователем до авторизации (приоритетнее темы из БД) */
+    const pendingThemeOverrideRef = React.useRef<ThemeMode | null>(null);
+
     /** фактический цвет выбранного акцента */
     const accentColor = ACCENT_COLORS[accent];
     const accentContrast = ACCENTS[accent].contrast;
@@ -67,6 +74,8 @@ export default function SettingsProvider({ children, accentStorageKey = 'niofon_
     const userId = session?.user.id;
 
     React.useLayoutEffect(() => {
+        accentRef.current = accent;
+
         document.documentElement.dataset.accent = accent;
 
         document.documentElement.style.setProperty('--accent-primary', ACCENTS[accent].color);
@@ -103,21 +112,45 @@ export default function SettingsProvider({ children, accentStorageKey = 'niofon_
         setReady(false);
 
         void getSettings(userId)
-            .then((loadedSettings) => {
+            .then(async (loadedSettings) => {
                 if (!active) return;
 
                 const loadedTheme = normalizeTheme(loadedSettings.theme);
 
                 const loadedAccent = getAccentName(loadedSettings.accent);
 
-                // синхронизация с бд не должна запускать ripple-анимацию
-                setAnimatedTheme(loadedTheme, undefined, false);
+                // явный выбор темы до входа имеет приоритет над темой из БД
+                const pendingTheme = pendingThemeOverrideRef.current;
+                pendingThemeOverrideRef.current = null;
 
+                let effectiveTheme = loadedTheme;
+
+                if (pendingTheme && pendingTheme !== loadedTheme) {
+                    // тема уже применена локально пользователем — сохраняем его выбор в БД
+                    effectiveTheme = pendingTheme;
+
+                    try {
+                        const savedSettings = await updateSettingsRequest(userId, { theme: pendingTheme });
+
+                        if (!active) return;
+
+                        effectiveTheme = normalizeTheme(savedSettings.theme);
+                    } catch {
+                        // если сохранить не удалось — оставляем выбранную локально тему в UI
+                    }
+                } else {
+                    // синхронизация с бд не должна запускать ripple-анимацию
+                    setAnimatedTheme(loadedTheme, undefined, true);
+                }
+
+                if (!active) return;
+
+                accentRef.current = loadedAccent;
                 setAccent(loadedAccent);
 
                 setSettings({
                     ...loadedSettings,
-                    theme: loadedTheme,
+                    theme: effectiveTheme,
                     accent: loadedAccent,
                 });
             })
@@ -137,6 +170,12 @@ export default function SettingsProvider({ children, accentStorageKey = 'niofon_
         };
     }, [authReady, userId, setAnimatedTheme]);
 
+    /** предварительное применение акцентного цвета */
+    const previewAccent = React.useCallback((nextAccent: AccentName) => {
+        accentRef.current = nextAccent;
+        setAccent(nextAccent);
+    }, []);
+
     /** изменение настроек пользователя */
     const changeSettings = React.useCallback(
         async (changes: SettingsChanges, origin?: ThemeOrigin) => {
@@ -146,7 +185,6 @@ export default function SettingsProvider({ children, accentStorageKey = 'niofon_
 
             const previousSettings = settings;
             const previousTheme = theme;
-            const previousAccent = accent;
 
             const normalizedChanges: SettingsChanges = {
                 ...changes,
@@ -160,10 +198,7 @@ export default function SettingsProvider({ children, accentStorageKey = 'niofon_
             }
 
             if (changes.accent !== undefined) {
-                const nextAccent = getAccentName(changes.accent);
-
-                normalizedChanges.accent = nextAccent;
-                setAccent(nextAccent);
+                normalizedChanges.accent = getAccentName(changes.accent);
             }
 
             setSettings({
@@ -176,14 +211,10 @@ export default function SettingsProvider({ children, accentStorageKey = 'niofon_
             try {
                 const updatedSettings = await updateSettingsRequest(userId, normalizedChanges);
 
-                const updatedAccent = getAccentName(updatedSettings.accent);
-
-                setAccent(updatedAccent);
-
                 setSettings({
                     ...updatedSettings,
                     theme: normalizeTheme(updatedSettings.theme),
-                    accent: updatedAccent,
+                    accent: getAccentName(updatedSettings.accent),
                 });
             } catch (requestError: unknown) {
                 setSettings(previousSettings);
@@ -192,17 +223,13 @@ export default function SettingsProvider({ children, accentStorageKey = 'niofon_
                     setAnimatedTheme(previousTheme, undefined, false);
                 }
 
-                if (changes.accent !== undefined) {
-                    setAccent(previousAccent);
-                }
-
                 const nextError = requestError instanceof Error ? requestError : new Error('Не удалось сохранить настройки');
 
                 setError(nextError);
                 throw nextError;
             }
         },
-        [userId, settings, theme, accent, setAnimatedTheme],
+        [userId, settings, theme, setAnimatedTheme],
     );
 
     /** изменение темы */
@@ -211,6 +238,7 @@ export default function SettingsProvider({ children, accentStorageKey = 'niofon_
             // без авторизации тема меняется только локально, без записи в БД
             if (!userId || !settings) {
                 setAnimatedTheme(nextTheme, origin);
+                pendingThemeOverrideRef.current = nextTheme; // запомнить явный выбор до входа
                 return;
             }
 
@@ -224,11 +252,24 @@ export default function SettingsProvider({ children, accentStorageKey = 'niofon_
 
     /** изменение акцентного цвета */
     const changeAccent = React.useCallback(
-        (nextAccent: AccentName) =>
-            changeSettings({
-                accent: nextAccent,
-            }),
-        [changeSettings],
+        async (nextAccent: AccentName) => {
+            const previousAccent = accentRef.current;
+
+            previewAccent(nextAccent);
+
+            try {
+                await changeSettings({
+                    accent: nextAccent,
+                });
+            } catch (requestError: unknown) {
+                if (accentRef.current === nextAccent) {
+                    previewAccent(previousAccent);
+                }
+
+                throw requestError;
+            }
+        },
+        [changeSettings, previewAccent],
     );
 
     const value = React.useMemo(
@@ -243,9 +284,10 @@ export default function SettingsProvider({ children, accentStorageKey = 'niofon_
             changeSettings,
             changeTheme,
             toggleTheme,
+            previewAccent,
             changeAccent,
         }),
-        [settings, ready, error, theme, accent, accentColor, accentContrast, changeSettings, changeTheme, toggleTheme, changeAccent],
+        [settings, ready, error, theme, accent, accentColor, accentContrast, changeSettings, changeTheme, toggleTheme, previewAccent, changeAccent],
     );
 
     return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;

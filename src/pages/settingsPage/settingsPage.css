@@ -1,0 +1,733 @@
+/* страница */
+
+.settings_page {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    background-color: var(--background-primary);
+    background-image: radial-gradient(900px 500px at 65% 10%, color-mix(in srgb, var(--accent-primary) 15%, transparent), transparent 80%);
+    background-repeat: no-repeat;
+}
+
+.settings_page_content {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    width: 100%;
+    max-width: 1080px;
+    height: 100%;
+    min-height: 0;
+    margin: 0 auto;
+    padding: 48px 48px 0;
+    overflow: hidden;
+}
+
+.settings_page_header {
+    width: min(100%, 680px);
+    padding-bottom: 32px;
+}
+
+.settings_page_state {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    min-height: 320px;
+    padding: 32px;
+    place-items: center;
+}
+
+.settings_page_state .settings_page_alert {
+    margin: 0;
+}
+
+.settings_page_eyebrow {
+    margin: 0 0 6px;
+    color: var(--text-disabled);
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.4;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.settings_page_title {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+}
+
+/* состояние сохранения */
+
+.settings_page_save_status {
+    display: inline-flex;
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    z-index: 5;
+    min-width: 184px;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 9px 14px;
+    overflow: hidden;
+    border: 1px solid var(--border-primary);
+    border-radius: 999px;
+    visibility: hidden;
+    opacity: 0;
+    color: var(--text-secondary);
+    background: color-mix(in srgb, var(--surface-primary) 88%, transparent);
+    box-shadow:
+        0 14px 36px rgba(0, 0, 0, 0.16),
+        0 3px 10px rgba(0, 0, 0, 0.09),
+        inset 0 1px 0 color-mix(in srgb, #ffffff 7%, transparent);
+    backdrop-filter: blur(16px);
+    pointer-events: none;
+    transform: translate(-50%, 18px) scale(0.92);
+    filter: blur(6px);
+    transition:
+        visibility 0s linear 0.34s,
+        opacity 0.24s ease,
+        transform 0.34s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.24s ease,
+        color 0.24s ease,
+        border-color 0.24s ease,
+        background-color 0.24s ease,
+        box-shadow 0.24s ease;
+}
+
+.settings_page_save_status[data-visible='true'] {
+    visibility: visible;
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+    filter: blur(0);
+    transition-delay: 0s;
+}
+
+/* внутреннее акцентное свечение */
+.settings_page_save_status::before {
+    position: absolute;
+    inset: -40%;
+    z-index: -1;
+    border-radius: 50%;
+    opacity: 0;
+    background: radial-gradient(circle, color-mix(in srgb, var(--accent-primary) 17%, transparent), transparent 66%);
+    content: '';
+    transform: scale(0.7);
+    transition:
+        opacity 0.3s ease,
+        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.settings_page_save_status[data-visible='true']::before {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* бегущий блик во время ожидания и сохранения */
+.settings_page_save_status::after {
+    position: absolute;
+    top: -30%;
+    bottom: -30%;
+    left: -65%;
+    width: 42%;
+    opacity: 0;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, #ffffff 12%, transparent), transparent);
+    content: '';
+    pointer-events: none;
+    transform: skewX(-18deg);
+}
+
+.settings_page_save_status[data-visible='true'][data-status='waiting']::after,
+.settings_page_save_status[data-visible='true'][data-status='saving']::after {
+    opacity: 1;
+    animation: settings_page_save_shimmer 1.7s ease-in-out infinite;
+}
+
+.settings_page_save_status_icon {
+    display: grid;
+    position: relative;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    place-items: center;
+}
+
+.settings_page_save_status_icon .inline_loader,
+.settings_page_save_status_icon svg {
+    width: 17px;
+    height: 17px;
+    font-size: 17px;
+}
+
+.settings_page_save_status_text {
+    position: relative;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    animation: settings_page_save_text_in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ожидание debounce */
+
+.settings_page_save_status[data-status='waiting'] {
+    color: var(--text-secondary);
+}
+
+.settings_page_save_status_pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    color: var(--accent-primary);
+    background: currentColor;
+    animation: settings_page_save_pulse 1.2s ease-in-out infinite;
+}
+
+/* активный запрос */
+
+.settings_page_save_status[data-status='saving'] {
+    border-color: color-mix(in srgb, var(--accent-primary) 24%, var(--border-primary));
+    color: var(--accent-primary);
+    background: color-mix(in srgb, var(--accent-primary) 6%, var(--surface-primary));
+}
+
+.settings_page_save_status[data-status='saving'] .inline_loader {
+    animation-duration: 0.8s;
+}
+
+/* успешное сохранение */
+
+.settings_page_save_status[data-status='saved'] {
+    border-color: color-mix(in srgb, #22a06b 30%, var(--border-primary));
+    color: #29b879;
+    background: color-mix(in srgb, #22a06b 9%, var(--surface-primary));
+    box-shadow:
+        0 14px 36px rgba(0, 0, 0, 0.14),
+        0 3px 10px rgba(0, 0, 0, 0.08),
+        0 0 24px color-mix(in srgb, #22a06b 13%, transparent);
+    animation: settings_page_save_success 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.settings_page_save_status[data-status='saved'] .settings_page_save_status_icon {
+    animation: settings_page_save_icon_in 0.52s cubic-bezier(0.16, 1.4, 0.3, 1) both;
+}
+
+.settings_page_save_status[data-status='saved'] .settings_page_save_status_icon::after {
+    position: absolute;
+    inset: -7px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    opacity: 0;
+    content: '';
+    animation: settings_page_save_ring 0.65s ease-out both;
+}
+
+@keyframes settings_page_save_shimmer {
+    0% {
+        left: -65%;
+    }
+
+    55%,
+    100% {
+        left: 125%;
+    }
+}
+
+@keyframes settings_page_save_text_in {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+        filter: blur(3px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+        filter: blur(0);
+    }
+}
+
+@keyframes settings_page_save_pulse {
+    0%,
+    100% {
+        opacity: 0.58;
+        transform: scale(0.8);
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-primary) 28%, transparent);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent-primary) 0%, transparent);
+    }
+}
+
+@keyframes settings_page_save_success {
+    0% {
+        transform: translate(-50%, 0) scale(0.96);
+    }
+
+    52% {
+        transform: translate(-50%, -2px) scale(1.035);
+    }
+
+    100% {
+        transform: translate(-50%, 0) scale(1);
+    }
+}
+
+@keyframes settings_page_save_icon_in {
+    from {
+        opacity: 0;
+        transform: scale(0.2) rotate(-35deg);
+    }
+
+    65% {
+        opacity: 1;
+        transform: scale(1.18) rotate(4deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes settings_page_save_ring {
+    from {
+        opacity: 0.5;
+        transform: scale(0.45);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(1.35);
+    }
+}
+
+.settings_page_body {
+    min-height: 0;
+    padding: 2px 4px 64px 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: color-mix(in srgb, var(--text-disabled) 45%, transparent) transparent;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+}
+
+.settings_page_body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.settings_page_body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.settings_page_body::-webkit-scrollbar-thumb {
+    min-height: 48px;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--text-disabled) 45%, transparent);
+    background-clip: padding-box;
+}
+
+.settings_page_body::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--accent-primary) 65%, var(--text-disabled));
+    background-clip: padding-box;
+}
+
+.settings_page_alert {
+    width: min(100%, 680px);
+    margin-bottom: 20px;
+    border-radius: 14px;
+}
+
+.settings_page_alert .MuiAlert-action {
+    align-items: center;
+    padding-top: 0;
+}
+
+.settings_page_alert .MuiButton-root {
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 650;
+    text-transform: none;
+}
+
+.settings_page_cards {
+    display: flex;
+    width: min(100%, 680px);
+    flex-direction: column;
+    gap: 20px;
+}
+
+.settings_page_card {
+    padding: 24px 24px 16px;
+    border: 1px solid var(--border-primary);
+    border-radius: 18px;
+    background: var(--surface-primary);
+    box-shadow: var(--shadow-primary);
+}
+
+.settings_page_card > h2 {
+    margin: 0 0 3px;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+}
+
+.settings_page_description {
+    margin: 0 0 16px;
+    color: var(--text-secondary);
+    font-size: 13.5px;
+    line-height: 1.55;
+}
+
+.settings_page_card > .settings_page_row:first-of-type {
+    border-top: 0;
+}
+
+.settings_page_row {
+    display: flex;
+    min-height: 58px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 12px 0;
+    border-top: 1px solid var(--border-primary);
+}
+
+.settings_page_label {
+    min-width: 0;
+    color: var(--text-primary);
+    font-size: 14.5px;
+    font-weight: 550;
+    line-height: 1.4;
+}
+
+.settings_page_label > span {
+    display: block;
+}
+
+.settings_page_label small {
+    display: block;
+    margin-top: 1px;
+    color: var(--text-disabled);
+    font-size: 12.5px;
+    font-weight: 400;
+    line-height: 1.45;
+}
+
+/* акцентный цвет */
+
+.settings_page_accents {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 10px;
+}
+
+.settings_page_accent {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border: 2px solid var(--surface-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    transition:
+        transform 0.14s cubic-bezier(0.32, 0.72, 0, 1),
+        opacity 0.14s ease;
+}
+
+.settings_page_accent:hover:not(:disabled) {
+    transform: scale(1.12);
+}
+
+.settings_page_accent_selected {
+    box-shadow:
+        0 0 0 2px var(--surface-primary),
+        0 0 0 4px currentColor;
+}
+
+.settings_page_accent:disabled {
+    cursor: default;
+    opacity: 0.62;
+}
+
+/* длительность */
+
+.settings_page_stepper {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--border-primary);
+    border-radius: 11px;
+    background: var(--surface-secondary);
+}
+
+.settings_page_stepper button {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    border: 0;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    background: transparent;
+    cursor: pointer;
+    transition:
+        color 0.14s ease,
+        background-color 0.14s ease;
+}
+
+.settings_page_stepper button:hover:not(:disabled) {
+    color: var(--text-primary);
+    background: var(--surface-tertiary);
+}
+
+.settings_page_stepper button:disabled {
+    color: var(--text-disabled);
+    cursor: default;
+    opacity: 0.58;
+}
+
+.settings_page_stepper button svg {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
+.settings_page_stepper_value {
+    display: grid;
+    min-width: 60px;
+    min-height: 30px;
+    place-items: center;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+    font-size: 15px;
+    font-weight: 650;
+    line-height: 1;
+    text-align: center;
+}
+
+.settings_page_stepper_value small {
+    color: var(--text-disabled);
+    font-size: 12px;
+    font-weight: 400;
+}
+
+/* переключатель */
+
+.settings_page_switch {
+    position: relative;
+    width: 44px;
+    height: 26px;
+    flex-shrink: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: var(--surface-tertiary);
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        opacity 0.14s ease;
+}
+
+.settings_page_switch > span {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.settings_page_switch_on {
+    background: var(--accent-primary);
+}
+
+.settings_page_switch_on > span {
+    transform: translateX(18px);
+}
+
+.settings_page_switch:disabled {
+    cursor: default;
+    opacity: 0.58;
+}
+
+/* аккаунт */
+
+.settings_page_logout_button.MuiButton-root {
+    min-width: 110px;
+    min-height: 40px;
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border-color: color-mix(in srgb, #e0533d 32%, var(--border-primary));
+    border-radius: 11px;
+    color: #e0533d;
+    font-size: 13.5px;
+    font-weight: 650;
+    line-height: 1.4;
+    text-transform: none;
+}
+
+.settings_page_logout_button.MuiButton-root:hover {
+    border-color: color-mix(in srgb, #e0533d 60%, var(--border-primary));
+    color: #d34934;
+    background: color-mix(in srgb, #e0533d 8%, transparent);
+}
+
+.settings_page_logout_button .MuiButton-startIcon svg {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
+/* подтверждение выхода */
+
+.settings_logout_dialog {
+    --app-dialog-max-width: 420px;
+}
+
+.settings_logout_dialog_title_row {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.settings_logout_dialog_icon {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 13px;
+    color: #e0533d;
+    background: color-mix(in srgb, #e0533d 14%, transparent);
+}
+
+.settings_logout_dialog_icon svg {
+    width: 21px;
+    height: 21px;
+    font-size: 21px;
+}
+
+.settings_logout_dialog_title {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.28;
+    letter-spacing: -0.025em;
+}
+
+.settings_logout_dialog_description {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.settings_logout_dialog_error {
+    margin: 14px 0 0;
+    padding: 10px 12px;
+    border: 1px solid color-mix(in srgb, #e0533d 24%, transparent);
+    border-radius: 10px;
+    color: #e0533d;
+    background: color-mix(in srgb, #e0533d 8%, transparent);
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+@media (max-width: 720px) {
+    .settings_page_content {
+        padding: 32px 24px 0;
+    }
+}
+
+@media (max-width: 560px) {
+    .settings_page_content {
+        padding: 26px 16px 0;
+    }
+
+    .settings_page_header {
+        padding-bottom: 24px;
+    }
+
+    .settings_page_save_status {
+        bottom: 18px;
+        max-width: calc(100% - 32px);
+    }
+
+    .settings_page_title {
+        font-size: 27px;
+    }
+
+    .settings_page_card {
+        padding: 20px 18px 12px;
+        border-radius: 16px;
+    }
+
+    .settings_page_row {
+        min-height: 0;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+        padding: 15px 0;
+    }
+
+    .settings_page_accents {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .settings_page_stepper {
+        align-self: stretch;
+        justify-content: space-between;
+    }
+
+    .settings_page_stepper_value {
+        flex: 1;
+    }
+
+    .settings_page_switch {
+        align-self: flex-end;
+        margin-top: -38px;
+    }
+
+    .settings_page_logout_button.MuiButton-root {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .settings_page_accent,
+    .settings_page_switch,
+    .settings_page_switch > span,
+    .settings_page_save_status {
+        transition: none;
+    }
+
+    .settings_page_save_status,
+    .settings_page_save_status::after,
+    .settings_page_save_status_icon,
+    .settings_page_save_status_icon::after,
+    .settings_page_save_status_text,
+    .settings_page_save_status_pulse {
+        animation: none !important;
+    }
+}
