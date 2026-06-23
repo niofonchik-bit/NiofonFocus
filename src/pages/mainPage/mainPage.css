@@ -25,9 +25,17 @@
 }
 
 .main_page_content {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr);
+    height: 100%;
     min-height: 0;
-    overflow-x: hidden;
-    overflow-y: hidden;
+    overflow: hidden;
+}
+
+.main_page_content > * {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
 }
 
 @media (max-width: 880px) {

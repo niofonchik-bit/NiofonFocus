@@ -7,6 +7,8 @@ import Logo from '@root/assets/logo.png';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import './mainMenu.css';
+import { useHabitStatistics } from '@providers/habitsProvider/habitsProvider';
+import { getDayWord } from '@root/scripts/utilities';
 
 /** элементы главного меню */
 const MAIN_MENU_ITEMS = [
@@ -35,6 +37,9 @@ const MAIN_MENU_ITEMS = [
 /** главное меню приложения */
 export default function MainMenu() {
     const { session } = useAuth();
+
+    const { totalCount, completedTodayCount, longestStreak } = useHabitStatistics();
+    
     const [displayName, setDisplayName] = React.useState<string | null>(null);
 
     const userId = session?.user.id;
@@ -108,7 +113,13 @@ export default function MainMenu() {
                             path={item.iconPath}
                         />
 
-                        <span>{item.label}</span>
+                        <span className='main_menu_navigation_label'>{item.label}</span>
+
+                        {item.path === '/habits' && totalCount > 0 && (
+                            <span className='main_menu_navigation_badge'>
+                                {completedTodayCount}/{totalCount}
+                            </span>
+                        )}
                     </NavLink>
                 ))}
             </nav>
@@ -120,7 +131,9 @@ export default function MainMenu() {
                     </span>
 
                     <span className='main_menu_streak_content'>
-                        <strong className='main_menu_streak_value'>0 дней</strong>
+                        <strong className='main_menu_streak_value'>
+                            {longestStreak} {getDayWord(longestStreak)}
+                        </strong>
 
                         <small className='main_menu_streak_label'>самая длинная цепочка</small>
                     </span>

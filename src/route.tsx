@@ -5,6 +5,7 @@ import HomePage from '@pages/dashboardPage/dashboardPage';
 import HabitPage from '@pages/habitPage/habitPage';
 import MainPage from '@pages/mainPage/mainPage';
 import { useAuth } from '@providers/authProvider/authProvider';
+import HabitsProvider from '@providers/habitsProvider/habitsProvider';
 import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router-dom';
 
 /** загрузчик страницы */
@@ -79,7 +80,11 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute />,
         children: [
             {
-                element: <MainPage />,
+                element: (
+                    <HabitsProvider>
+                        <MainPage />
+                    </HabitsProvider>
+                ),
                 children: [
                     {
                         index: true,
@@ -97,7 +102,7 @@ export const router = createBrowserRouter([
                             pageTransition: {
                                 level: 1,
                             },
-                        }
+                        },
                     },
                     {
                         path: 'settings',

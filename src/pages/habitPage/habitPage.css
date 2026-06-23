@@ -1,1 +1,665 @@
-/** стили */
+/* страница */
+
+.habit_page {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    background-color: var(--background-primary);
+    background-image: radial-gradient(
+        900px 500px at 65% 10%,
+        color-mix(in srgb, var(--accent-primary) 15%, transparent),
+        transparent 80%
+    );
+    background-repeat: no-repeat;
+}
+
+.habit_page_content {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    width: 100%;
+    max-width: 1080px;
+    height: 100%;
+    min-height: 0;
+    margin: 0 auto;
+    padding: 48px 48px 0;
+    overflow: hidden;
+}
+
+.habit_page_header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 32px;
+}
+
+.habit_page_body {
+    min-height: 0;
+    padding: 2px 4px 64px 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: color-mix(in srgb, var(--text-disabled) 45%, transparent) transparent;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+}
+
+/* скроллбар списка привычек */
+
+.habit_page_body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.habit_page_body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.habit_page_body::-webkit-scrollbar-thumb {
+    min-height: 48px;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--text-disabled) 45%, transparent);
+    background-clip: padding-box;
+}
+
+.habit_page_body::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--accent-primary) 65%, var(--text-disabled));
+    background-clip: padding-box;
+}
+
+.habit_page_date {
+    margin: 0 0 6px;
+    color: var(--text-disabled);
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.4;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.habit_page_title {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+}
+
+.habit_page_subtitle {
+    margin: 5px 0 0;
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.habit_page_create_button.MuiButton-root {
+    min-height: 42px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    color: var(--accent-contrast);
+    background: var(--accent-primary);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-transform: none;
+    box-shadow: 0 3px 12px color-mix(in srgb, var(--accent-primary) 32%, transparent);
+}
+
+.habit_page_create_button.MuiButton-root:hover {
+    background: var(--accent-primary);
+    box-shadow: 0 5px 18px color-mix(in srgb, var(--accent-primary) 42%, transparent);
+}
+
+.habit_page_create_button .MuiButton-startIcon svg {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
+.habit_page_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(264px, 1fr));
+    gap: 16px;
+}
+
+/* состояния страницы */
+
+.habit_page_loading {
+    display: flex;
+    height: 100%;
+    min-height: 240px;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.habit_page_alert {
+    margin-top: 48px;
+    border-radius: 14px;
+}
+
+.habit_page_alert .MuiButton-root {
+    text-transform: none;
+}
+
+.habit_page_empty {
+    display: flex;
+    min-height: 360px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 48px 24px;
+    border: 1px solid var(--border-primary);
+    border-radius: 18px;
+    background: var(--surface-primary);
+    box-shadow: var(--shadow-primary);
+    text-align: center;
+}
+
+.habit_page_empty_icon {
+    display: grid;
+    width: 92px;
+    height: 92px;
+    place-items: center;
+    border-radius: 26px;
+    color: var(--accent-primary);
+    background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+}
+
+.habit_page_empty_icon svg {
+    width: 42px;
+    height: 42px;
+    font-size: 42px;
+}
+
+.habit_page_empty h2 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+}
+
+.habit_page_empty p {
+    max-width: 380px;
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* карточка привычки */
+
+.habit_card {
+    --habit-color: var(--accent-primary);
+
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    overflow: hidden;
+    border: 1px solid var(--border-primary);
+    border-radius: 18px;
+    color: var(--text-primary);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--habit-color) 7%, transparent), transparent 42%), var(--surface-primary);
+    box-shadow: var(--shadow-primary);
+    transition:
+        transform 0.16s cubic-bezier(0.32, 0.72, 0, 1),
+        box-shadow 0.2s cubic-bezier(0.32, 0.72, 0, 1),
+        border-color 0.2s ease;
+}
+
+.habit_card:hover {
+    border-color: color-mix(in srgb, var(--habit-color) 20%, var(--border-primary));
+    box-shadow:
+        0 4px 16px color-mix(in srgb, var(--text-primary) 7%, transparent),
+        var(--shadow-primary);
+    transform: translateY(-2px);
+}
+
+.habit_card_header {
+    display: flex;
+    position: relative;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.habit_card_icon {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 13px;
+    color: var(--habit-color);
+    background: color-mix(in srgb, var(--habit-color) 16%, transparent);
+}
+
+.habit_card_icon svg {
+    width: 21px;
+    height: 21px;
+    font-size: 21px;
+}
+
+.habit_card_information {
+    min-width: 0;
+    flex: 1;
+}
+
+.habit_card_menu_button.MuiIconButton-root {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    margin: -4px -4px 0 0;
+    padding: 5px;
+    border-radius: 8px;
+    color: var(--text-disabled);
+    opacity: 0;
+    transition:
+        opacity 0.15s ease,
+        color 0.15s ease,
+        background-color 0.15s ease;
+}
+
+.habit_card:hover
+    .habit_card_menu_button.MuiIconButton-root,
+.habit_card_menu_button_open.MuiIconButton-root,
+.habit_card_menu_button.MuiIconButton-root:focus-visible {
+    opacity: 1;
+}
+
+.habit_card_menu_button.MuiIconButton-root:hover {
+    color: var(--text-primary);
+    background: var(--surface-secondary);
+}
+
+.habit_card_menu_button.MuiIconButton-root svg {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
+.habit_card_title {
+    margin: 1px 0 2px;
+    overflow: hidden;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 650;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.habit_card_streak {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.habit_card_streak svg {
+    width: 16px;
+    height: 16px;
+    color: #ff7a18;
+    font-size: 13px;
+}
+
+.habit_card_schedule {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 3px;
+    color: var(--text-disabled);
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.habit_card_schedule svg {
+    width: 12px;
+    height: 12px;
+    font-size: 12px;
+}
+
+/* меню действий карточки */
+
+.habit_card_menu.MuiPaper-root {
+    min-width: 168px;
+    margin-top: 6px;
+    padding: 6px;
+    border: 1px solid var(--border-primary);
+    border-radius: 12px;
+    color: var(--text-primary);
+    background: var(--surface-primary);
+    box-shadow: var(--shadow-elevated);
+}
+
+.habit_card_menu_list.MuiList-root {
+    padding: 0;
+}
+
+.habit_card_menu_item.MuiMenuItem-root {
+    display: flex;
+    min-height: 0;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 11px;
+    border-radius: 9px;
+    color: var(--text-primary);
+    font-size: 13.5px;
+    font-weight: 550;
+    line-height: 1.4;
+    transition:
+        color 0.15s ease,
+        background-color 0.15s ease;
+}
+
+.habit_card_menu_item.MuiMenuItem-root:hover {
+    background: var(--surface-secondary);
+}
+
+.habit_card_menu_item
+    .MuiListItemIcon-root {
+    min-width: 0;
+    color: inherit;
+}
+
+.habit_card_menu_item
+    .MuiListItemIcon-root
+    svg {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+}
+
+.habit_card_menu_item_delete.MuiMenuItem-root {
+    color: #e0533d;
+}
+
+.habit_card_menu_item_delete.MuiMenuItem-root:hover {
+    background: color-mix(
+        in srgb,
+        #e0533d 10%,
+        transparent
+    );
+}
+
+/* дни недели */
+
+.habit_card_week {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.habit_card_week_day {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.habit_card_week_day small {
+    color: var(--text-disabled);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.habit_card_week_dot {
+    display: grid;
+    width: 100%;
+    max-width: 26px;
+    aspect-ratio: 1;
+    place-items: center;
+    border: 1px solid color-mix(in srgb, var(--text-primary) 6%, transparent);
+    border-radius: 8px;
+    background: var(--surface-secondary);
+    transition:
+        opacity 0.18s ease,
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.habit_card_week_dot svg {
+    width: 12px;
+    height: 12px;
+    font-size: 12px;
+}
+
+.habit_card_week_dot_completed {
+    border-color: transparent;
+    color: #ffffff;
+    background: var(--habit-color);
+}
+
+.habit_card_week_dot_today {
+    box-shadow:
+        0 0 0 2px var(--surface-primary),
+        0 0 0 3.5px var(--habit-color);
+}
+
+.habit_card_week_dot_off {
+    border-color: var(--border-primary);
+    border-style: dashed;
+    background: transparent;
+}
+
+.habit_card_week_dot_off.habit_card_week_dot_completed {
+    border-color: transparent;
+    border-style: solid;
+    background: var(--habit-color);
+}
+
+.habit_card_week_dot_future {
+    opacity: 0.4;
+}
+
+/* кнопка выполнения */
+
+.habit_card_check_wrapper {
+    position: relative;
+}
+
+.habit_card_check_button.MuiButton-root {
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid var(--border-primary);
+    border-radius: 12px;
+    color: var(--text-primary);
+    background: var(--surface-secondary);
+    box-shadow: none;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-transform: none;
+    transition:
+        transform 0.12s ease,
+        color 0.18s ease,
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.habit_card_check_button.MuiButton-root:hover {
+    border-color: color-mix(in srgb, var(--habit-color) 50%, var(--border-primary));
+    background: var(--surface-secondary);
+    box-shadow: none;
+}
+
+.habit_card_check_button.MuiButton-root:active {
+    transform: scale(0.985);
+}
+
+.habit_card_check_button .MuiButton-startIcon {
+    margin-right: 8px;
+}
+
+.habit_card_check_button .MuiButton-startIcon svg {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+}
+
+.habit_card_check_button_completed.MuiButton-root,
+.habit_card_check_button_completed.MuiButton-root:hover {
+    border-color: transparent;
+    color: #ffffff;
+    background: var(--habit-color);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--habit-color) 34%, transparent);
+}
+
+.habit_card_check_button.Mui-disabled {
+    color: var(--text-secondary);
+    opacity: 0.72;
+}
+
+.habit_card_check_button_completed.Mui-disabled {
+    color: #ffffff;
+    background: var(--habit-color);
+}
+
+.habit_card_check_button_pop .MuiButton-startIcon svg {
+    animation: habit_check_pop 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.habit_card_error {
+    display: block;
+    margin-top: -6px;
+    color: #e0533d;
+    font-size: 11.5px;
+    font-weight: 550;
+    line-height: 1.4;
+    text-align: center;
+}
+
+/* анимация выполнения */
+
+.habit_card_burst {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.habit_card_burst span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 2px;
+    background: var(--habit-color);
+    animation: habit_burst 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes habit_check_pop {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(-18deg);
+    }
+
+    55% {
+        transform: scale(1.25) rotate(4deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+    }
+}
+
+@keyframes habit_burst {
+    to {
+        opacity: 0;
+        transform: translate(var(--burst-x), var(--burst-y)) scale(0);
+    }
+}
+
+/* адаптивность */
+
+@media (max-width: 880px) {
+    .habit_page_content {
+        padding: 24px 16px 0;
+    }
+
+    .habit_page_header {
+        padding-bottom: 24px;
+    }
+
+    .habit_page_body {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .habit_page_title {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 560px) {
+    .habit_page_content {
+    padding: 16px 16px 0;
+}
+
+    .habit_page_header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .habit_page_title {
+        font-size: 22px;
+    }
+
+    .habit_page_create_button.MuiButton-root {
+        width: 100%;
+    }
+
+    .habit_page_grid {
+        grid-template-columns: 1fr;
+    }
+
+    .habit_card {
+        padding: 20px;
+    }
+}
+
+@media (hover: none) {
+    .habit_card:hover {
+        transform: none;
+    }
+
+    .habit_card_menu_button.MuiIconButton-root {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .habit_card,
+    .habit_card_check_button.MuiButton-root,
+    .habit_card_week_dot {
+        transition: none;
+    }
+
+    .habit_card_check_button_pop .MuiButton-startIcon svg,
+    .habit_card_burst span {
+        animation: none;
+    }
+}
