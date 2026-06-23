@@ -32,7 +32,7 @@
             "@effects/*": ["./src/effects/*"],
             "@root/*": ["./src/*"],
             "@project/*": ["./*"],
-        }
+        },
     },
     "include": ["src"]
 }

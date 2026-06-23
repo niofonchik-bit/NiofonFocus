@@ -3,10 +3,19 @@ import PathIcon from '@components/pathIcon/pathIcon';
 import { getHabitIconPath } from '@constants/habitIcons';
 import { clearCelebration, playCelebration } from '@effects/celebration/celebration';
 import '@effects/celebration/celebration.css';
-import { mdiCheck, mdiDeleteOutline, mdiDotsVertical, mdiFire, mdiPencilOutline } from '@mdi/js';
+import { mdiCheck, mdiDeleteOutline, mdiDotsVertical, mdiFire, mdiPencilOutline, mdiStarFourPointsOutline } from '@mdi/js';
+import {
+    getBonusStreak,
+    getBonusStreakLabel,
+    getCurrentStreak,
+    getDateKey,
+    getDayWord,
+    getHabitWeek,
+    getStreakLabel,
+    isHabitScheduled,
+} from '@scripts/utilities';
 import { Button, CircularProgress, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material';
 import { useHabitActions } from '@providers/habitsProvider/habitsProvider';
-import { getCurrentStreak, getDateKey, getHabitWeek, getStreakLabel, isHabitScheduled } from '@scripts/utilities';
 import React from 'react';
 
 interface HabitCardProps {
@@ -34,6 +43,7 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
     const completedToday = habit.completions.includes(todayKey);
     const scheduledToday = isHabitScheduled(habit, currentDate);
     const streak = getCurrentStreak(habit);
+    const bonusStreak = getBonusStreak(habit);
     const week = getHabitWeek(habit, currentDate);
 
     React.useEffect(() => {
@@ -134,10 +144,24 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
                 <div className='habit_card_information'>
                     <h2 className='habit_card_title'>{habit.title}</h2>
 
-                    <div className='habit_card_streak'>
-                        <PathIcon path={mdiFire} />
+                    <div className='habit_card_streaks'>
+                        {/* основной стрик прячем, если он 0, но есть бонус — чтобы не было «Начни сегодня» при отметке */}
+                        {(streak > 0 || bonusStreak === 0) && (
+                            <div className='habit_card_streak'>
+                                <PathIcon path={mdiFire} />
+                                <span>{getStreakLabel(streak)}</span>
+                            </div>
+                        )}
 
-                        <span>{getStreakLabel(streak)}</span>
+                        {bonusStreak > 0 && (
+                            <div
+                                className='habit_card_streak habit_card_streak_bonus'
+                                title={`Выполнено вне расписания: ${bonusStreak} ${getDayWord(bonusStreak)} подряд`}
+                            >
+                                <PathIcon path={mdiStarFourPointsOutline} />
+                                <span>{streak > 0 ? `+${bonusStreak}` : getBonusStreakLabel(bonusStreak)}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
 

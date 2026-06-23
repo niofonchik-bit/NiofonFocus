@@ -43,8 +43,9 @@ function getInitialAccent(): AccentName {
             return getAccentName(documentAccent);
         }
     } catch {
-        return DEFAULT_ACCENT;
+        // dataset может быть недоступен
     }
+    return DEFAULT_ACCENT;
 }
 
 /** провайдер настроек пользователя */
@@ -206,14 +207,16 @@ export default function SettingsProvider({ children, accentStorageKey = 'niofon_
 
     /** изменение темы */
     const changeTheme = React.useCallback(
-        (nextTheme: ThemeMode, origin?: ThemeOrigin) =>
-            changeSettings(
-                {
-                    theme: nextTheme,
-                },
-                origin,
-            ),
-        [changeSettings],
+        async (nextTheme: ThemeMode, origin?: ThemeOrigin) => {
+            // без авторизации тема меняется только локально, без записи в БД
+            if (!userId || !settings) {
+                setAnimatedTheme(nextTheme, origin);
+                return;
+            }
+
+            await changeSettings({ theme: nextTheme }, origin);
+        },
+        [userId, settings, setAnimatedTheme, changeSettings],
     );
 
     /** переключение темы */

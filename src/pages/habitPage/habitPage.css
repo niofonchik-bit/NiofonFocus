@@ -316,6 +316,35 @@
     font-size: 13px;
 }
 
+.habit_card_streaks {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;      /* было wrap — из-за него рос «Кодинг» */
+    gap: 10px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* основной чип ужимается с многоточием, а не переносится */
+.habit_card_streak {
+    min-width: 0;
+}
+
+.habit_card_streak span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* бонус-чип в цвете привычки и не сжимается — пропадает основной текст, а не он */
+.habit_card_streak_bonus {
+    flex-shrink: 0;
+    color: var(--habit-color);
+}
+
+.habit_card_streak_bonus svg {
+    color: var(--habit-color);
+}
+
 .habit_card_schedule {
     display: flex;
     align-items: center;

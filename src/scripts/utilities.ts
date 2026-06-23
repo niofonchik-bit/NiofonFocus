@@ -135,6 +135,49 @@ export function getCurrentStreak(habit: Habit): number {
     return streak;
 }
 
+/** получение бонус-цепочки — выполнений вне расписания подряд */
+export function getBonusStreak(habit: Habit): number {
+    // у ежедневных привычек внеплановых дней нет
+    if (habit.schedule.type === 'daily' || habit.schedule.days.length === 0 || habit.schedule.days.length === 7) {
+        return 0;
+    }
+
+    const completions = new Set(habit.completions);
+    const createdAt = parseDateKey(habit.createdAt);
+    let currentDate = new Date();
+
+    // сегодняшний внеплановый день ещё можно выполнить — не прерываем из-за него
+    if (!isHabitScheduled(habit, currentDate) && !completions.has(getDateKey(currentDate))) {
+        currentDate = addDays(currentDate, -1);
+    }
+
+    let streak = 0;
+
+    for (let iteration = 0; iteration < MAX_STREAK_LOOKBACK_DAYS; iteration += 1) {
+        if (currentDate < createdAt) {
+            break;
+        }
+
+        // запланированные дни относятся к основной цепочке — пропускаем
+        if (!isHabitScheduled(habit, currentDate)) {
+            if (!completions.has(getDateKey(currentDate))) {
+                break;
+            }
+
+            streak += 1;
+        }
+
+        currentDate = addDays(currentDate, -1);
+    }
+
+    return streak;
+}
+
+/** подпись бонус-цепочки */
+export function getBonusStreakLabel(streak: number): string {
+    return `+${streak} ${getDayWord(streak)} сверх плана`;
+}
+
 /** получение подписи цепочки */
 export function getStreakLabel(streak: number): string {
     if (streak === 0) {

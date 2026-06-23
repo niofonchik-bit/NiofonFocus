@@ -4,6 +4,7 @@ import path from 'path';
 
 export default defineConfig({
     plugins: [react()],
+    envDir: '../niofocus-env',
     base: '/',
     server: {
         host: '127.0.0.1',
