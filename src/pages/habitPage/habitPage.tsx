@@ -116,14 +116,14 @@ export default function HabitPage() {
                 <HabitPageHeader onCreate={openCreate} />
 
                 <div className='habit_page_body'>
-                    {loading && (
+                    {loading && habits.length === 0 && (
                         <AppLoader
                             variant='section'
                             label='Загрузка привычек...'
                         />
                     )}
 
-                    {!loading && error && (
+                    {!loading && error && habits.length === 0 && (
                         <Alert
                             className='habit_page_alert'
                             severity='error'
@@ -144,7 +144,7 @@ export default function HabitPage() {
 
                     {!loading && !error && habits.length === 0 && <HabitEmptyState onCreate={openCreate} />}
 
-                    {!loading && !error && habits.length > 0 && (
+                    {habits.length > 0 && (
                         <HabitList
                             habits={habits}
                             onEdit={openEdit}
@@ -154,25 +154,23 @@ export default function HabitPage() {
                 </div>
             </div>
 
-            {dialog && (
-                <HabitDialog
-                    habit={dialog.mode === 'edit' ? dialog.habit : null}
-                    submitting={submitting}
-                    error={dialogError}
-                    onSubmit={handleSubmit}
-                    onClose={() => setDialog(null)}
-                />
-            )}
+            <HabitDialog
+                open={dialog !== null}
+                habit={dialog?.mode === 'edit' ? dialog.habit : null}
+                submitting={submitting}
+                error={dialogError}
+                onSubmit={handleSubmit}
+                onClose={() => setDialog(null)}
+            />
 
-            {deleteTarget && (
-                <HabitDeleteDialog
-                    habit={deleteTarget}
-                    deleting={deleting}
-                    error={deleteError}
-                    onConfirm={handleDelete}
-                    onCancel={() => setDeleteTarget(null)}
-                />
-            )}
+            <HabitDeleteDialog
+                open={deleteTarget !== null}
+                habit={deleteTarget}
+                deleting={deleting}
+                error={deleteError}
+                onConfirm={handleDelete}
+                onCancel={() => setDeleteTarget(null)}
+            />
         </section>
     );
 }

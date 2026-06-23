@@ -84,7 +84,7 @@ export default function HabitsProvider({ children }: HabitsProviderProps) {
             return;
         }
 
-        setLoading(true);
+        setLoading(habitsRef.current.length === 0);
         setError(null);
 
         void getHabits(userId)

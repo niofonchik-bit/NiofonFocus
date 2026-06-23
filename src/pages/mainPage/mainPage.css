@@ -1,26 +1,48 @@
-:root[data-theme='light'] {
-    --main-page-background-gradient: radial-gradient(
-        1200px 600px at 78% -10%,
-        color-mix(in srgb, var(--accent-primary) 9%, transparent),
-        transparent 70%
-    );
-}
-:root[data-theme='dark'] {
-    --main-page-background-gradient: radial-gradient(
-        1200px 600px at 78% -10%,
-        color-mix(in srgb, var(--accent-primary) 16%, transparent),
-        transparent 70%
-    );
-}
-
 .main_page {
     display: grid;
     grid-template-columns: 248px minmax(0, 1fr);
     height: 100dvh;
     overflow: hidden;
+    position: relative;
+    isolation: isolate;
     background-color: var(--background-primary);
-    background-image: var(--main-page-background-gradient);
     background-attachment: fixed;
+}
+
+.main_page::before,
+.main_page::after {
+    content: '';
+    position: absolute;
+    inset: -30%;              /* запас за краями: при движении/вращении не оголяются углы */
+    z-index: -1;
+    pointer-events: none;
+    will-change: transform;
+}
+
+/* слой A — основной тон акцента */
+.main_page::before {
+    background:
+        radial-gradient(closest-side at 78% 14%,
+            color-mix(in srgb, var(--accent-primary) 26%, transparent), transparent),
+        radial-gradient(closest-side at 36% 86%,
+            color-mix(in srgb, var(--accent-primary) 15%, transparent), transparent);
+    filter: blur(40px) saturate(115%);
+}
+
+/* слой B — тот же акцент, но сдвинут по тону → «меш» из двух цветов */
+.main_page::after {
+    background:
+        radial-gradient(closest-side at 92% 80%,
+            color-mix(in srgb, var(--accent-primary) 22%, transparent), transparent),
+        radial-gradient(closest-side at 34% 28%,
+            color-mix(in srgb, var(--accent-primary) 13%, transparent), transparent);
+    filter: blur(50px) hue-rotate(40deg) saturate(120%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .main_page::before {
+        animation: none;
+    }
 }
 
 .main_page_content {

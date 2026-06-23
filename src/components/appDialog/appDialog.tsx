@@ -1,15 +1,31 @@
-import { Dialog, DialogActions, DialogContent, type DialogActionsProps, type DialogContentProps, type DialogProps } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, Grow, type DialogActionsProps, type DialogContentProps, type DialogProps } from '@mui/material';
 import './appDialog.css';
+import React from 'react';
+import type { TransitionProps } from '@mui/material/transitions';
 
 type AppDialogProps = DialogProps & {
     busy?: boolean;
 };
+
+const AppDialogTransition = React.forwardRef(function AppDialogTransition(
+    props: TransitionProps & { children: React.ReactElement },
+    ref: React.Ref<unknown>,
+) {
+    return (
+        <Grow
+            ref={ref}
+            timeout={{ enter: 300, exit: 200 }}
+            {...props}
+        />
+    );
+});
 
 /** базовая оболочка диалогового окна */
 function AppDialogRoot({ busy = false, className, onClose, children, ...props }: AppDialogProps) {
     return (
         <Dialog
             {...props}
+            slots={{ transition: AppDialogTransition }}
             className={['app_dialog_root', className].filter(Boolean).join(' ')}
             onClose={(event, reason) => {
                 if (!busy) {

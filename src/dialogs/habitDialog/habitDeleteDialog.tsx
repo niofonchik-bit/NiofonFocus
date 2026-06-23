@@ -8,6 +8,7 @@ import React from 'react';
 import './habitDialog.css';
 
 interface HabitDeleteDialogProps {
+    open?: boolean;
     habit: Habit;
     deleting?: boolean;
     error?: string | null;
@@ -16,13 +17,13 @@ interface HabitDeleteDialogProps {
 }
 
 /** форма подтверждения удаления привычки */
-export default function HabitDeleteDialog({ habit, deleting = false, error, onConfirm, onCancel }: HabitDeleteDialogProps) {
+export default function HabitDeleteDialog({ open, habit, deleting = false, error, onConfirm, onCancel }: HabitDeleteDialogProps) {
     const titleId = React.useId();
     const descriptionId = React.useId();
 
     return (
         <AppDialog
-            open
+            open={open}
             busy={deleting}
             role='alertdialog'
             className='habit_delete_dialog'
@@ -50,7 +51,7 @@ export default function HabitDeleteDialog({ habit, deleting = false, error, onCo
                     id={descriptionId}
                     className='habit_delete_dialog_description'
                 >
-                    «{habit.title}» и вся история отметок будут удалены. Это действие нельзя отменить.
+                    «{habit?.title}» и вся история отметок будут удалены. Это действие нельзя отменить.
                 </p>
 
                 {error && (

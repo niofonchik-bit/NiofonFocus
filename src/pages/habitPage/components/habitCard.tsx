@@ -23,12 +23,13 @@ interface HabitCardProps {
     habit: Habit;
     onEdit?: (habit: Habit) => void;
     onDelete?: (habit: Habit) => void;
+    style?: React.CSSProperties;
 }
 
 const POP_ANIMATION_MS = 1000;
 
 /** карточка привычки */
-export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
+export default function HabitCard({ habit, onEdit, onDelete, style }: HabitCardProps) {
     const { toggleCompletion } = useHabitActions();
 
     const [pending, setPending] = React.useState(false);
@@ -129,7 +130,7 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
     return (
         <article
             className='habit_card'
-            style={{ '--habit-color': habit.color, '--celebration-color': habit.color } as React.CSSProperties}
+            style={{ '--habit-color': habit.color, '--celebration-color': habit.color, ...(style ?? {}) } as React.CSSProperties}
         >
             <span
                 ref={effectsLayerRef}

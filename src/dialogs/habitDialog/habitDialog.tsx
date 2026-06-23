@@ -12,6 +12,7 @@ import './habitDialog.css';
 
 interface HabitDialogProps {
     /** привычка для редактирования; null — создание */
+    open?: boolean;
     habit?: Habit | null;
     submitting?: boolean;
     error?: string | null;
@@ -23,7 +24,7 @@ const DEFAULT_ICON = HABIT_ICONS[0].value;
 const DEFAULT_WEEK_DAYS = [0, 2, 4];
 
 /** форма создания и редактирования привычки */
-export default function HabitDialog({ habit, submitting = false, error, onSubmit, onClose }: HabitDialogProps) {
+export default function HabitDialog({ open, habit, submitting = false, error, onSubmit, onClose }: HabitDialogProps) {
     const editing = Boolean(habit);
 
     const formId = React.useId();
@@ -91,7 +92,7 @@ export default function HabitDialog({ habit, submitting = false, error, onSubmit
 
     return (
         <AppDialog
-            open
+            open={open}
             busy={submitting}
             aria-labelledby={titleId}
             aria-describedby={descriptionId}

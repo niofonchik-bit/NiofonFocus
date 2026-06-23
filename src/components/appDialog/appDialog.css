@@ -19,7 +19,6 @@
         ),
         var(--surface-primary);
     box-shadow: var(--shadow-elevated);
-    animation: app_dialog_in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .app_dialog_header {
