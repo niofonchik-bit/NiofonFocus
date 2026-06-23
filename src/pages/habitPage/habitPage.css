@@ -467,7 +467,7 @@
 }
 
 .habit_card_week_dot_future {
-    opacity: 0.4;
+    opacity: 0.75;
 }
 
 /* кнопка выполнения */
@@ -652,14 +652,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .habit_card,
+    habit_card,
     .habit_card_check_button.MuiButton-root,
     .habit_card_week_dot {
         transition: none;
     }
 
-    .habit_card_check_button_pop .MuiButton-startIcon svg,
-    .habit_card_burst span {
+    .habit_card_check_button_pop .MuiButton-startIcon svg {
         animation: none;
     }
 }

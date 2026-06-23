@@ -1,27 +1,19 @@
 import { toggleCompletion, type Habit } from '@api/habits';
 import PathIcon from '@components/pathIcon/pathIcon';
-import { mdiCalendarMonthOutline, mdiCheck, mdiDeleteOutline, mdiDotsVertical, mdiFire, mdiPencilOutline } from '@mdi/js';
+import { mdiCheck, mdiDeleteOutline, mdiDotsVertical, mdiFire, mdiPencilOutline } from '@mdi/js';
 import { Button, CircularProgress, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material';
-import { getHabitIconPath } from '@root/constants/habitIcons';
-import { getCurrentStreak, getDateKey, getHabitWeek, getScheduleLabel, getStreakLabel, isHabitScheduled } from '@root/scripts/utilities';
-import React from 'react';
 import { useHabitActions } from '@providers/habitsProvider/habitsProvider';
+import { getHabitIconPath } from '@root/constants/habitIcons';
+import { getCurrentStreak, getDateKey, getHabitWeek, getStreakLabel, isHabitScheduled } from '@root/scripts/utilities';
+import React from 'react';
+import { clearHabitCelebration, playHabitCelebration } from './effects/habitCelebration';
+import './effects/habitCelebration.css';
 
 interface HabitCardProps {
     habit: Habit;
     onEdit?: (habit: Habit) => void;
     onDelete?: (habit: Habit) => void;
 }
-
-/** частицы анимации выполнения */
-const BURST_PARTICLES = [
-    { x: -22, y: -26 },
-    { x: 22, y: -26 },
-    { x: -30, y: -2 },
-    { x: 30, y: -2 },
-    { x: -14, y: -36 },
-    { x: 14, y: -36 },
-];
 
 /** карточка привычки */
 export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
@@ -34,6 +26,7 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
     const [menuAnchor, setMenuAnchor] = React.useState<HTMLElement | null>(null);
 
     const animationTimerRef = React.useRef<number | null>(null);
+    const effectsLayerRef = React.useRef<HTMLSpanElement | null>(null);
 
     const currentDate = new Date();
     const todayKey = getDateKey(currentDate);
@@ -79,6 +72,7 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
         }
 
         setCompletionAnimation(true);
+        playHabitCelebration(effectsLayerRef.current);
 
         animationTimerRef.current = window.setTimeout(() => {
             setCompletionAnimation(false);
@@ -117,6 +111,7 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
 
                 if (!savedCompleted) {
                     setCompletionAnimation(false);
+                    clearHabitCelebration(effectsLayerRef.current);
                 }
             }
         } catch {
@@ -125,6 +120,7 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
             updateCompletion(currentHabit.id, todayKey, completedToday);
 
             setCompletionAnimation(false);
+            clearHabitCelebration(effectsLayerRef.current);
             setRequestFailed(true);
         } finally {
             setPending(false);
@@ -162,6 +158,12 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
                 } as React.CSSProperties
             }
         >
+            <span
+                ref={effectsLayerRef}
+                className='habit_card_effects'
+                aria-hidden='true'
+            />
+
             <div className='habit_card_header'>
                 <span className='habit_card_icon'>
                     <PathIcon path={getHabitIconPath(currentHabit.icon)} />
@@ -175,14 +177,6 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
 
                         <span>{getStreakLabel(streak)}</span>
                     </div>
-
-                    {currentHabit.schedule.type === 'weekly' && (
-                        <div className='habit_card_schedule'>
-                            <PathIcon path={mdiCalendarMonthOutline} />
-
-                            <span>{getScheduleLabel(currentHabit.schedule)}</span>
-                        </div>
-                    )}
                 </div>
 
                 <IconButton
@@ -272,25 +266,6 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
             </div>
 
             <div className='habit_card_check_wrapper'>
-                {completionAnimation && (
-                    <span
-                        className='habit_card_burst'
-                        aria-hidden='true'
-                    >
-                        {BURST_PARTICLES.map((particle) => (
-                            <span
-                                key={`${particle.x}_${particle.y}`}
-                                style={
-                                    {
-                                        '--burst-x': `${particle.x}px`,
-                                        '--burst-y': `${particle.y}px`,
-                                    } as React.CSSProperties
-                                }
-                            />
-                        ))}
-                    </span>
-                )}
-
                 <Button
                     className={[
                         'habit_card_check_button',

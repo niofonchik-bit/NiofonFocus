@@ -1,0 +1,173 @@
+/* слой эффектов карточки */
+
+.habit_card_effects {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    overflow: visible;
+    pointer-events: none;
+}
+
+/* базовые элементы */
+
+.habit_fx_dot {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    background: var(--habit-color);
+    will-change: transform, opacity;
+}
+
+.habit_fx_glyph {
+    position: absolute;
+    display: inline-flex;
+    color: var(--habit-color);
+    line-height: 0;
+    will-change: transform, opacity;
+}
+
+.habit_fx_glyph svg {
+    width: 1em;
+    height: 1em;
+}
+
+/* фейерверк */
+
+.habit_fx_rocket {
+    animation: habit_fx_rocket 0.42s cubic-bezier(0.3, 0.7, 0.4, 1) forwards;
+}
+
+.habit_fx_spark {
+    animation: habit_fx_spark 0.7s cubic-bezier(0.12, 0.8, 0.3, 1) forwards;
+}
+
+/* высокий берст */
+
+.habit_fx_high {
+    animation: habit_fx_high 0.8s cubic-bezier(0.1, 0.7, 0.3, 1) forwards;
+}
+
+/* конфетти */
+
+.habit_fx_confetti {
+    animation: habit_fx_confetti 1.1s ease-in forwards;
+}
+
+/* искры-звёзды */
+
+.habit_fx_sparkle {
+    animation: habit_fx_sparkle 0.65s ease-in-out forwards;
+}
+
+/* парящие сердца */
+
+.habit_fx_heart {
+    animation: habit_fx_heart 1.1s ease-out forwards;
+}
+
+/* пролетающие звёзды */
+
+.habit_fx_shoot {
+    animation: habit_fx_shoot 0.9s linear forwards;
+}
+
+/* рисующаяся галочка (общий эффект) */
+
+.habit_fx_check {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 52px;
+    height: 52px;
+    margin: -26px 0 0 -26px;
+    animation: habit_fx_draw_out 0.95s ease forwards;
+}
+
+.habit_fx_check svg {
+    width: 52px;
+    height: 52px;
+}
+
+.habit_fx_check_ring {
+    fill: none;
+    stroke: var(--habit-color);
+    stroke-width: 3;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: habit_fx_draw 0.4s ease forwards;
+}
+
+.habit_fx_check_mark {
+    fill: none;
+    stroke: var(--habit-color);
+    stroke-width: 3.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: habit_fx_draw 0.3s ease 0.34s forwards;
+}
+
+/* keyframes */
+
+@keyframes habit_fx_rocket {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0.35; transform: translateY(var(--rise)); }
+}
+
+@keyframes habit_fx_spark {
+    0% { opacity: 1; transform: translate(0, 0) scale(1); }
+    70% { opacity: 1; }
+    100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(0.3); }
+}
+
+@keyframes habit_fx_high {
+    0% { opacity: 1; transform: translate(0, 0) scale(1) rotate(0); }
+    100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(0.5) rotate(var(--r)); }
+}
+
+@keyframes habit_fx_confetti {
+    0% { opacity: 0; transform: translate(0, 0) rotate(0); }
+    12% { opacity: 1; }
+    65% { opacity: 1; }
+    100% { opacity: 0; transform: translate(var(--x), var(--y)) rotate(var(--r)); }
+}
+
+@keyframes habit_fx_sparkle {
+    0% { opacity: 0; transform: scale(0) rotate(0); }
+    45% { opacity: 1; transform: scale(1) rotate(55deg); }
+    100% { opacity: 0; transform: scale(0.2) rotate(135deg); }
+}
+
+@keyframes habit_fx_heart {
+    0% { opacity: 0; transform: translate(0, 0) scale(0.4) rotate(var(--rot)); }
+    20% { opacity: 1; }
+    100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(1) rotate(var(--rot)); }
+}
+
+@keyframes habit_fx_shoot {
+    0% { opacity: 0; transform: translate(0, 0) rotate(-45deg) scale(0.6); }
+    12% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) rotate(-45deg) scale(1); }
+}
+
+@keyframes habit_fx_draw {
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes habit_fx_draw_out {
+    0% { opacity: 0; transform: scale(0.7); }
+    15% { opacity: 1; transform: scale(1); }
+    70% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.2); }
+}
+
+/* уменьшенное движение */
+
+@media (prefers-reduced-motion: reduce) {
+    .habit_card_effects {
+        display: none;
+    }
+}
