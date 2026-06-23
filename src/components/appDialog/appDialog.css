@@ -1,0 +1,139 @@
+.app_dialog_root .MuiBackdrop-root {
+    background: color-mix(in srgb, #08080c 54%, transparent);
+    backdrop-filter: blur(7px);
+}
+
+.app_dialog_root .MuiDialog-paper {
+    width: calc(100% - 48px);
+    max-width: var(--app-dialog-max-width, 480px);
+    max-height: min(90dvh, 760px);
+    margin: 24px;
+    overflow: hidden;
+    border: 1px solid var(--border-primary);
+    border-radius: 20px;
+    background:
+        linear-gradient(
+            145deg,
+            color-mix(in srgb, var(--accent-primary) 4%, transparent),
+            transparent 38%
+        ),
+        var(--surface-primary);
+    box-shadow: var(--shadow-elevated);
+    animation: app_dialog_in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.app_dialog_header {
+    padding: 28px 28px 0;
+}
+
+.app_dialog_content.MuiDialogContent-root {
+    padding: 22px 28px 2px;
+    overflow-x: hidden;
+}
+
+.app_dialog_actions.MuiDialogActions-root {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 28px 28px;
+}
+
+.app_dialog_button.MuiButton-root {
+    min-width: 132px;
+    min-height: 42px;
+    padding: 9px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.4;
+    text-transform: none;
+    box-shadow: none;
+}
+
+.app_dialog_button.MuiButton-root .MuiButton-startIcon {
+    margin-right: 8px;
+}
+
+.app_dialog_button.MuiButton-root .MuiButton-startIcon svg {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
+.app_dialog_button_ghost.MuiButton-root {
+    border-color: var(--border-primary);
+    color: var(--text-secondary);
+    background: transparent;
+}
+
+.app_dialog_button_ghost.MuiButton-root:hover {
+    border-color: color-mix(in srgb, var(--text-secondary) 30%, var(--border-primary));
+    color: var(--text-primary);
+    background: var(--surface-secondary);
+}
+
+.app_dialog_button_primary.MuiButton-root {
+    color: var(--accent-contrast);
+    background: var(--accent-primary);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-primary) 28%, transparent);
+}
+
+.app_dialog_button_primary.MuiButton-root:hover {
+    background: var(--accent-primary);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-primary) 38%, transparent);
+}
+
+.app_dialog_button_danger.MuiButton-root {
+    color: #ffffff;
+    background: #e0533d;
+    box-shadow: 0 4px 14px color-mix(in srgb, #e0533d 28%, transparent);
+}
+
+.app_dialog_button_danger.MuiButton-root:hover {
+    background: #c94734;
+    box-shadow: 0 6px 18px color-mix(in srgb, #e0533d 38%, transparent);
+}
+
+@keyframes app_dialog_in {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (max-width: 520px) {
+    .app_dialog_root .MuiDialog-paper {
+        width: calc(100% - 24px);
+        margin: 12px;
+        border-radius: 18px;
+    }
+
+    .app_dialog_header {
+        padding: 22px 20px 0;
+    }
+
+    .app_dialog_content.MuiDialogContent-root {
+        padding: 20px 20px 2px;
+    }
+
+    .app_dialog_actions.MuiDialogActions-root {
+        gap: 10px;
+        padding: 22px 20px 24px;
+    }
+
+    .app_dialog_button.MuiButton-root {
+        min-width: 0;
+        flex: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app_dialog_root .MuiDialog-paper {
+        animation: none;
+    }
+}

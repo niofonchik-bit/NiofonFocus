@@ -351,10 +351,6 @@
         ) !important;
 }
 
-.auth_page_submit_button .MuiCircularProgress-root {
-    color: currentColor;
-}
-
 .auth_page_switch {
     margin-top: 20px !important;
     color: var(--text-secondary);

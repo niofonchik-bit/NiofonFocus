@@ -1,5 +1,4 @@
 import type { PageTransitionHandle } from '@components/animatedOutlet/animatedOutlet';
-import { Box, CircularProgress } from '@mui/material';
 import AuthPage from '@pages/authPage/authPage';
 import DashboardPage from '@pages/dashboardPage/dashboardPage';
 import HabitPage from '@pages/habitPage/habitPage';
@@ -9,19 +8,16 @@ import { useAuth } from '@providers/authProvider/authProvider';
 import HabitsProvider from '@providers/habitsProvider/habitsProvider';
 import ProfileProvider from '@providers/profileProvider/profileProvider';
 import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router-dom';
+import AppLoader from '@components/appLoader/appLoader';
+import TimerPage from '@pages/timerPage/timerPage';
 
 /** загрузчик страницы */
 function PageLoader() {
     return (
-        <Box
-            sx={{
-                minHeight: '100vh',
-                display: 'grid',
-                placeItems: 'center',
-            }}
-        >
-            <CircularProgress />
-        </Box>
+        <AppLoader
+            variant='page'
+            label='Загрузка приложения...'
+        />
     );
 }
 
@@ -107,6 +103,15 @@ export const router = createBrowserRouter([
                                 level: 1,
                             },
                         },
+                    },
+                    {
+                        path: 'timer',
+                        element: <TimerPage />,
+                        handle: {
+                            pageTransition: {
+                                level: 1,
+                            },
+                        } satisfies PageTransitionHandle,
                     },
                     {
                         path: 'settings',

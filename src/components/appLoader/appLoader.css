@@ -1,0 +1,141 @@
+.app_loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    color: var(--text-secondary);
+}
+
+.app_loader_page {
+    min-height: 100dvh;
+    background:
+        radial-gradient(
+            520px 320px at 50% 42%,
+            color-mix(in srgb, var(--accent-primary) 13%, transparent),
+            transparent 72%
+        ),
+        var(--background-primary);
+}
+
+.app_loader_section {
+    width: 100%;
+    height: 100%;
+    min-height: 240px;
+}
+
+.app_loader_visual {
+    position: relative;
+    display: grid;
+    width: 64px;
+    height: 64px;
+    place-items: center;
+}
+
+.app_loader_visual::before {
+    position: absolute;
+    inset: 2px;
+    border: 1px solid color-mix(in srgb, var(--accent-primary) 16%, transparent);
+    border-radius: 50%;
+    content: '';
+}
+
+.app_loader_orbit {
+    position: absolute;
+    border-radius: 50%;
+    background: conic-gradient(
+        from 30deg,
+        transparent 0 20%,
+        color-mix(in srgb, var(--accent-primary) 32%, transparent) 28%,
+        var(--accent-primary) 42%,
+        transparent 58% 100%
+    );
+    mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0);
+}
+
+.app_loader_orbit_outer {
+    inset: 0;
+    animation: app_loader_rotate 1.35s linear infinite;
+}
+
+.app_loader_orbit_inner {
+    inset: 11px;
+    opacity: 0.72;
+    animation: app_loader_rotate_reverse 0.95s linear infinite;
+}
+
+.app_loader_core {
+    width: 13px;
+    height: 13px;
+    border-radius: 4px;
+    background: var(--accent-primary);
+    box-shadow:
+        0 0 0 7px color-mix(in srgb, var(--accent-primary) 11%, transparent),
+        0 5px 16px color-mix(in srgb, var(--accent-primary) 45%, transparent);
+    animation: app_loader_pulse 1.35s ease-in-out infinite;
+}
+
+.app_loader_label {
+    color: var(--text-secondary);
+    font-size: 13.5px;
+    font-weight: 550;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+    animation: app_loader_label 1.6s ease-in-out infinite;
+}
+
+.inline_loader {
+    display: inline-block;
+    width: 1.1em;
+    height: 1.1em;
+    flex-shrink: 0;
+    border: 2px solid color-mix(in srgb, currentColor 28%, transparent);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: app_loader_rotate 0.72s linear infinite;
+}
+
+@keyframes app_loader_rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes app_loader_rotate_reverse {
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+@keyframes app_loader_pulse {
+    0%,
+    100% {
+        transform: scale(0.82) rotate(0deg);
+        opacity: 0.78;
+    }
+
+    50% {
+        transform: scale(1) rotate(45deg);
+        opacity: 1;
+    }
+}
+
+@keyframes app_loader_label {
+    0%,
+    100% {
+        opacity: 0.55;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app_loader_orbit,
+    .app_loader_core,
+    .app_loader_label,
+    .inline_loader {
+        animation: none;
+    }
+}

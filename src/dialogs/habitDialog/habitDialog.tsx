@@ -1,6 +1,9 @@
 import type { Habit, NewHabit } from '@api/habits';
+import AppDialog from '@components/appDialog/appDialog';
+import { InlineLoader } from '@components/appLoader/appLoader';
 import PathIcon from '@components/pathIcon/pathIcon';
 import { mdiCalendarBlankOutline, mdiCheck, mdiFire, mdiPlus } from '@mdi/js';
+import { Button } from '@mui/material';
 import { DEFAULT_HABIT_COLOR, HABIT_COLORS } from '@root/constants/habitColors';
 import { getHabitIconPath, HABIT_ICONS } from '@root/constants/habitIcons';
 import { getScheduleLabel, WEEK_DAY_LABELS } from '@root/scripts/utilities';
@@ -19,38 +22,44 @@ interface HabitDialogProps {
 const DEFAULT_ICON = HABIT_ICONS[0].value;
 const DEFAULT_WEEK_DAYS = [0, 2, 4];
 
-/** диалог создания и редактирования привычки */
+/** форма создания и редактирования привычки */
 export default function HabitDialog({ habit, submitting = false, error, onSubmit, onClose }: HabitDialogProps) {
     const editing = Boolean(habit);
+
+    const formId = React.useId();
+    const titleId = React.useId();
+    const descriptionId = React.useId();
 
     const [title, setTitle] = React.useState(habit?.title ?? '');
     const [color, setColor] = React.useState(habit?.color ?? DEFAULT_HABIT_COLOR);
     const [icon, setIcon] = React.useState(habit?.icon ?? DEFAULT_ICON);
+
     const [freq, setFreq] = React.useState<'daily' | 'weekly'>(habit?.schedule.type === 'weekly' ? 'weekly' : 'daily');
+
     const [days, setDays] = React.useState<number[]>(
         habit?.schedule.type === 'weekly' && habit.schedule.days.length ? habit.schedule.days : DEFAULT_WEEK_DAYS,
     );
+
     const [touched, setTouched] = React.useState(false);
 
     const inputRef = React.useRef<HTMLInputElement>(null);
 
-    // закрытие по Escape + автофокус
     React.useEffect(() => {
         inputRef.current?.focus();
+    }, []);
 
-        function handleKey(event: KeyboardEvent) {
-            if (event.key === 'Escape' && !submitting) {
-                onClose();
-            }
-        }
+    const schedule =
+        freq === 'weekly'
+            ? {
+                  type: 'weekly' as const,
+                  days,
+              }
+            : {
+                  type: 'daily' as const,
+                  days: [],
+              };
 
-        window.addEventListener('keydown', handleKey);
-
-        return () => window.removeEventListener('keydown', handleKey);
-    }, [onClose, submitting]);
-
-    const schedule = freq === 'weekly' ? { type: 'weekly' as const, days } : { type: 'daily' as const, days: [] };
-
+    const titleError = touched && !title.trim();
     const daysError = touched && freq === 'weekly' && days.length === 0;
 
     /** переключение дня недели */
@@ -59,7 +68,7 @@ export default function HabitDialog({ habit, submitting = false, error, onSubmit
     }
 
     /** отправка формы */
-    function handleSubmit(event: React.FormEvent) {
+    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setTouched(true);
 
@@ -81,30 +90,44 @@ export default function HabitDialog({ habit, submitting = false, error, onSubmit
     }
 
     return (
-        <div
-            className='habit_dialog_overlay'
-            onMouseDown={(event) => {
-                if (event.target === event.currentTarget && !submitting) {
-                    onClose();
-                }
-            }}
+        <AppDialog
+            open
+            busy={submitting}
+            aria-labelledby={titleId}
+            aria-describedby={descriptionId}
+            onClose={onClose}
         >
-            <div
-                className='habit_dialog'
-                role='dialog'
-                aria-modal='true'
-                aria-label={editing ? 'Редактировать привычку' : 'Новая привычка'}
-            >
-                <form onSubmit={handleSubmit}>
-                    <h2 className='habit_dialog_heading'>{editing ? 'Редактировать привычку' : 'Новая привычка'}</h2>
+            <AppDialog.Header>
+                <h2
+                    id={titleId}
+                    className='habit_dialog_heading'
+                >
+                    {editing ? 'Редактировать привычку' : 'Новая привычка'}
+                </h2>
 
-                    <p className='habit_dialog_sub'>{editing ? 'Обновите детали привычки.' : 'Маленький ежедневный шаг к большой цели.'}</p>
+                <p
+                    id={descriptionId}
+                    className='habit_dialog_subtitle'
+                >
+                    {editing ? 'Обновите детали привычки.' : 'Маленький ежедневный шаг к большой цели.'}
+                </p>
+            </AppDialog.Header>
 
+            <AppDialog.Content>
+                <form
+                    id={formId}
+                    onSubmit={handleSubmit}
+                >
                     {/* живое превью */}
                     <div className='habit_dialog_preview'>
                         <div
                             className='habit_dialog_preview_icon'
-                            style={{ background: `color-mix(in srgb, ${color} 16%, transparent)`, color } as React.CSSProperties}
+                            style={
+                                {
+                                    background: `color-mix(in srgb, ${color} 16%, transparent)`,
+                                    color,
+                                } as React.CSSProperties
+                            }
                         >
                             <PathIcon path={getHabitIconPath(icon)} />
                         </div>
@@ -127,8 +150,11 @@ export default function HabitDialog({ habit, submitting = false, error, onSubmit
                             maxLength={40}
                             placeholder='Например, Чтение 20 минут'
                             disabled={submitting}
+                            aria-invalid={titleError}
                             onChange={(event) => setTitle(event.target.value)}
                         />
+
+                        {titleError && <p className='habit_dialog_hint'>Введите название привычки</p>}
                     </div>
 
                     <div className='habit_dialog_field'>
@@ -142,9 +168,13 @@ export default function HabitDialog({ habit, submitting = false, error, onSubmit
                                     className={['habit_dialog_swatch', value === color ? 'habit_dialog_swatch_selected' : '']
                                         .filter(Boolean)
                                         .join(' ')}
-                                    style={{ background: value, color: value }}
+                                    style={{
+                                        background: value,
+                                        color: value,
+                                    }}
                                     aria-label={value}
                                     aria-pressed={value === color}
+                                    disabled={submitting}
                                     onClick={() => setColor(value)}
                                 >
                                     {value === color && <PathIcon path={mdiCheck} />}
@@ -167,6 +197,7 @@ export default function HabitDialog({ habit, submitting = false, error, onSubmit
                                     className={['habit_dialog_icon', option.value === icon ? 'habit_dialog_icon_selected' : '']
                                         .filter(Boolean)
                                         .join(' ')}
+                                    disabled={submitting}
                                     onClick={() => setIcon(option.value)}
                                 >
                                     <PathIcon path={option.path} />
@@ -175,13 +206,14 @@ export default function HabitDialog({ habit, submitting = false, error, onSubmit
                         </div>
                     </div>
 
-                    <div className='habit_dialog_field'>
+                    <div className='habit_dialog_field habit_dialog_field_last'>
                         <label>Расписание</label>
 
                         <div className='habit_dialog_freq'>
                             <button
                                 type='button'
                                 className={freq === 'daily' ? 'habit_dialog_freq_on' : ''}
+                                disabled={submitting}
                                 onClick={() => setFreq('daily')}
                             >
                                 <PathIcon path={mdiFire} />
@@ -191,6 +223,7 @@ export default function HabitDialog({ habit, submitting = false, error, onSubmit
                             <button
                                 type='button'
                                 className={freq === 'weekly' ? 'habit_dialog_freq_on' : ''}
+                                disabled={submitting}
                                 onClick={() => setFreq('weekly')}
                             >
                                 <PathIcon path={mdiCalendarBlankOutline} />
@@ -206,6 +239,7 @@ export default function HabitDialog({ habit, submitting = false, error, onSubmit
                                         type='button'
                                         aria-pressed={days.includes(index)}
                                         className={['habit_dialog_day', days.includes(index) ? 'habit_dialog_day_on' : ''].filter(Boolean).join(' ')}
+                                        disabled={submitting}
                                         onClick={() => toggleDay(index)}
                                     >
                                         {label}
@@ -217,29 +251,39 @@ export default function HabitDialog({ habit, submitting = false, error, onSubmit
                         {daysError && <p className='habit_dialog_hint'>Выберите хотя бы один день</p>}
                     </div>
 
-                    {error && <p className='habit_dialog_hint'>{error}</p>}
-
-                    <div className='habit_dialog_actions'>
-                        <button
-                            type='button'
-                            className='habit_dialog_button habit_dialog_button_ghost'
-                            disabled={submitting}
-                            onClick={onClose}
+                    {error && (
+                        <p
+                            className='habit_dialog_hint habit_dialog_hint_global'
+                            role='alert'
                         >
-                            Отмена
-                        </button>
-
-                        <button
-                            type='submit'
-                            className='habit_dialog_button habit_dialog_button_primary'
-                            disabled={submitting}
-                        >
-                            <PathIcon path={editing ? mdiCheck : mdiPlus} />
-                            {editing ? 'Сохранить' : 'Создать привычку'}
-                        </button>
-                    </div>
+                            {error}
+                        </p>
+                    )}
                 </form>
-            </div>
-        </div>
+            </AppDialog.Content>
+
+            <AppDialog.Actions>
+                <Button
+                    type='button'
+                    variant='outlined'
+                    className='app_dialog_button app_dialog_button_ghost'
+                    disabled={submitting}
+                    onClick={onClose}
+                >
+                    Отмена
+                </Button>
+
+                <Button
+                    type='submit'
+                    form={formId}
+                    variant='contained'
+                    className='app_dialog_button app_dialog_button_primary'
+                    disabled={submitting}
+                    startIcon={submitting ? <InlineLoader /> : <PathIcon path={editing ? mdiCheck : mdiPlus} />}
+                >
+                    {editing ? 'Сохранить' : 'Создать привычку'}
+                </Button>
+            </AppDialog.Actions>
+        </AppDialog>
     );
 }

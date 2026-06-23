@@ -1,9 +1,12 @@
 import { type Habit } from '@api/habits';
+import { InlineLoader } from '@components/appLoader/appLoader';
 import PathIcon from '@components/pathIcon/pathIcon';
 import { getHabitIconPath } from '@constants/habitIcons';
 import { clearCelebration, playCelebration } from '@effects/celebration/celebration';
 import '@effects/celebration/celebration.css';
 import { mdiCheck, mdiDeleteOutline, mdiDotsVertical, mdiFire, mdiPencilOutline, mdiStarFourPointsOutline } from '@mdi/js';
+import { Button, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material';
+import { useHabitActions } from '@providers/habitsProvider/habitsProvider';
 import {
     getBonusStreak,
     getBonusStreakLabel,
@@ -14,8 +17,6 @@ import {
     getStreakLabel,
     isHabitScheduled,
 } from '@scripts/utilities';
-import { Button, CircularProgress, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material';
-import { useHabitActions } from '@providers/habitsProvider/habitsProvider';
 import React from 'react';
 
 interface HabitCardProps {
@@ -264,17 +265,7 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
                     disableElevation
                     disabled={pending}
                     aria-pressed={completedToday}
-                    startIcon={
-                        pending ? (
-                            <CircularProgress
-                                size={18}
-                                thickness={5}
-                                color='inherit'
-                            />
-                        ) : (
-                            <PathIcon path={mdiCheck} />
-                        )
-                    }
+                    startIcon={pending ? <InlineLoader /> : <PathIcon path={mdiCheck} />}
                     onClick={handleToggle}
                 >
                     {completedToday ? 'Выполнено сегодня' : scheduledToday ? 'Отметить сегодня' : 'Отметить вне расписания'}

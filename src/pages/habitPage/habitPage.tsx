@@ -1,15 +1,16 @@
 import { type Habit, type NewHabit } from '@api/habits';
+import AppLoader from '@components/appLoader/appLoader';
 import PathIcon from '@components/pathIcon/pathIcon';
 import { mdiCheckAll, mdiRefresh } from '@mdi/js';
-import { Alert, Button, CircularProgress } from '@mui/material';
+import { Alert, Button } from '@mui/material';
 import { useHabitActions, useHabitsCollection } from '@providers/habitsProvider/habitsProvider';
-import './habitPage.css';
-import React from 'react';
-import { useLocation } from 'react-router-dom';
-import HabitPageHeader from './components/habitPageHeader';
-import HabitList from './components/habitList';
 import HabitDeleteDialog from '@root/dialogs/habitDialog/habitDeleteDialog';
 import HabitDialog from '@root/dialogs/habitDialog/habitDialog';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
+import HabitList from './components/habitList';
+import HabitPageHeader from './components/habitPageHeader';
+import './habitPage.css';
 
 type DialogState = { mode: 'create' } | { mode: 'edit'; habit: Habit } | null;
 
@@ -116,14 +117,10 @@ export default function HabitPage() {
 
                 <div className='habit_page_body'>
                     {loading && (
-                        <div
-                            className='habit_page_loading'
-                            role='status'
-                        >
-                            <CircularProgress size={30} />
-
-                            <span>Загрузка привычек...</span>
-                        </div>
+                        <AppLoader
+                            variant='section'
+                            label='Загрузка привычек...'
+                        />
                     )}
 
                     {!loading && error && (

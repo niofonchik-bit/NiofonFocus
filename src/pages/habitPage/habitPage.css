@@ -126,17 +126,6 @@
 
 /* состояния страницы */
 
-.habit_page_loading {
-    display: flex;
-    height: 100%;
-    min-height: 240px;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    color: var(--text-secondary);
-    font-size: 14px;
-}
-
 .habit_page_alert {
     margin-top: 48px;
     border-radius: 14px;

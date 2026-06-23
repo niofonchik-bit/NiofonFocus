@@ -1,20 +1,9 @@
+import { signIn, signUp, translateAuthError } from '@api/auth';
+import { InlineLoader } from '@components/appLoader/appLoader';
 import PathIcon from '@components/pathIcon/pathIcon';
 import ThemeToggleButton from '@components/themeToggleButton/themeToggleButton';
 import { mdiAccountOutline, mdiCheck, mdiEmailOutline, mdiEyeOffOutline, mdiEyeOutline, mdiLockOutline } from '@mdi/js';
-import {
-    Alert,
-    Box,
-    Button,
-    Checkbox,
-    CircularProgress,
-    FormControlLabel,
-    IconButton,
-    InputAdornment,
-    Stack,
-    TextField,
-    Typography,
-} from '@mui/material';
-import { signIn, signUp, translateAuthError } from '@api/auth';
+import { Alert, Box, Button, Checkbox, FormControlLabel, IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import { getPasswordStrength } from '@root/scripts/utilities';
 import { useState, type SyntheticEvent } from 'react';
 import './authPage.css';
@@ -193,7 +182,8 @@ function LoginForm({ active, isLoading, onLoadingChange, onChangeMode }: AuthFor
                     className='auth_page_submit_button'
                     disabled={isLoading}
                 >
-                    {isLoading ? <CircularProgress size={20} /> : 'Войти'}
+                    {isLoading && <InlineLoader />}
+                    Войти
                 </Button>
 
                 <Typography className='auth_page_switch'>
@@ -464,7 +454,8 @@ function RegisterForm({ active, isLoading, onLoadingChange, onChangeMode }: Auth
                     className='auth_page_submit_button'
                     disabled={isLoading}
                 >
-                    {isLoading ? <CircularProgress size={20} /> : 'Создать аккаунт'}
+                    {isLoading && <InlineLoader />}
+                    Создать аккаунт
                 </Button>
 
                 <Typography className='auth_page_switch'>
