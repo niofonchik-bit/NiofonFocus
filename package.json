@@ -1,33 +1,35 @@
 {
-  "name": "@niofon/niofocus",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "engines": {
-    "node": ">=22.12.0"
-  },
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mdi/js": "^7.4.47",
-    "@mui/material": "^9.1.1",
-    "@supabase/supabase-js": "^2.108.2",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "react-router-dom": "^7.18.0"
-  },
-  "devDependencies": {
-    "@types/node": "^26.0.0",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.1",
-    "supabase": "^2.107.0",
-    "typescript": "^6.0.2",
-    "vite": "^8.0.4"
-  }
+    "name": "@niofon/niofocus",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "engines": {
+        "node": ">=22.12.0"
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "typecheck": "tsc -p tsconfig.app.json --noEmit",
+        "lint": "eslint . --ext .ts,.tsx"
+    },
+    "dependencies": {
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.1",
+        "@mdi/js": "^7.4.47",
+        "@mui/material": "^9.1.1",
+        "@supabase/supabase-js": "^2.108.2",
+        "react": "^19.2.4",
+        "react-dom": "^19.2.4",
+        "react-router-dom": "^7.18.0"
+    },
+    "devDependencies": {
+        "@types/node": "^26.0.0",
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
+        "@vitejs/plugin-react": "^6.0.1",
+        "supabase": "^2.107.0",
+        "typescript": "^6.0.2",
+        "vite": "^8.0.4"
+    }
 }

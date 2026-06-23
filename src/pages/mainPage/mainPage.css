@@ -1,15 +1,14 @@
 :root[data-theme='light'] {
     --main-page-background-gradient: radial-gradient(
         1200px 600px at 78% -10%,
-        color-mix(in srgb, #7c5cfc 9%, transparent),
+        color-mix(in srgb, var(--accent-primary) 9%, transparent),
         transparent 70%
     );
 }
-
 :root[data-theme='dark'] {
     --main-page-background-gradient: radial-gradient(
         1200px 600px at 78% -10%,
-        color-mix(in srgb, #7c5cfc 16%, transparent),
+        color-mix(in srgb, var(--accent-primary) 16%, transparent),
         transparent 70%
     );
 }

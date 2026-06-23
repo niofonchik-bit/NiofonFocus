@@ -9,7 +9,7 @@
         <title>Niofocus</title>
         <link
             rel="icon"
-            href="src/assets/logo.ico"
+            href="/logo.ico"
             type="image/x-icon"
         />
     </head>
@@ -26,6 +26,7 @@
                 const savedAccent = localStorage.getItem('niofon_focus_accent');
 
                 const savedAccentColor = localStorage.getItem('niofon_focus_accent_color');
+                const savedAccentContrast = localStorage.getItem('niofon_focus_accent_contrast');
 
                 document.documentElement.dataset.theme = savedTheme === 'dark' ? 'dark' : 'light';
 
@@ -33,6 +34,10 @@
 
                 if (savedAccentColor && CSS.supports('color', savedAccentColor)) {
                     document.documentElement.style.setProperty('--accent-primary', savedAccentColor);
+                }
+
+                if (savedAccentContrast && CSS.supports('color', savedAccentContrast)) {
+                    document.documentElement.style.setProperty('--accent-contrast', savedAccentContrast);
                 }
             } catch {
                 document.documentElement.dataset.theme = 'light';

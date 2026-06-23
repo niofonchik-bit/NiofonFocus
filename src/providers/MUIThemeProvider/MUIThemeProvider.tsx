@@ -1,7 +1,7 @@
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import React from 'react';
 import { useSettings } from '@providers/settingsProvider/settingsProvider';
-import MUITheme from './muiTheme.js';
+import MUITheme from './muiTheme';
 
 /** провайдер темы mui */
 export default function MUIThemeProvider({
@@ -9,7 +9,7 @@ export default function MUIThemeProvider({
 }: {
     children: React.ReactNode;
 }) {
-    const { theme, accentColor } = useSettings();
+    const { theme, accentColor, accentContrast } = useSettings();
 
     const muiTheme = React.useMemo(
         () =>
@@ -21,6 +21,7 @@ export default function MUIThemeProvider({
                     primary: {
                         ...MUITheme.palette?.primary,
                         main: accentColor,
+                        contrastText: accentContrast,
                     },
                 },
             }),

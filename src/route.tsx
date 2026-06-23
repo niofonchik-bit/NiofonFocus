@@ -1,11 +1,13 @@
 import type { PageTransitionHandle } from '@components/animatedOutlet/animatedOutlet';
 import { Box, CircularProgress } from '@mui/material';
 import AuthPage from '@pages/authPage/authPage';
-import HomePage from '@pages/dashboardPage/dashboardPage';
+import DashboardPage from '@pages/dashboardPage/dashboardPage';
 import HabitPage from '@pages/habitPage/habitPage';
 import MainPage from '@pages/mainPage/mainPage';
+import SettingsPage from '@pages/settingsPage/settingsPage';
 import { useAuth } from '@providers/authProvider/authProvider';
 import HabitsProvider from '@providers/habitsProvider/habitsProvider';
+import ProfileProvider from '@providers/profileProvider/profileProvider';
 import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router-dom';
 
 /** загрузчик страницы */
@@ -81,14 +83,16 @@ export const router = createBrowserRouter([
         children: [
             {
                 element: (
-                    <HabitsProvider>
-                        <MainPage />
-                    </HabitsProvider>
+                    <ProfileProvider>
+                        <HabitsProvider>
+                            <MainPage />
+                        </HabitsProvider>
+                    </ProfileProvider>
                 ),
                 children: [
                     {
                         index: true,
-                        element: <HomePage />,
+                        element: <DashboardPage />,
                         handle: {
                             pageTransition: {
                                 level: 0,
@@ -106,7 +110,7 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: 'settings',
-                        element: <div>Settings</div>,
+                        element: <SettingsPage />,
                         handle: {
                             pageTransition: {
                                 level: 1,

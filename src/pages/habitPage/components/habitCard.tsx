@@ -3,17 +3,19 @@ import PathIcon from '@components/pathIcon/pathIcon';
 import { mdiCheck, mdiDeleteOutline, mdiDotsVertical, mdiFire, mdiPencilOutline } from '@mdi/js';
 import { Button, CircularProgress, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material';
 import { useHabitActions } from '@providers/habitsProvider/habitsProvider';
-import { getHabitIconPath } from '@root/constants/habitIcons';
-import { getCurrentStreak, getDateKey, getHabitWeek, getStreakLabel, isHabitScheduled } from '@root/scripts/utilities';
+import { getHabitIconPath } from '@constants/habitIcons';
+import { getCurrentStreak, getDateKey, getHabitWeek, getStreakLabel, isHabitScheduled } from '@scripts/utilities';
 import React from 'react';
-import { clearHabitCelebration, playHabitCelebration } from './effects/habitCelebration';
-import './effects/habitCelebration.css';
+import { clearCelebration, playCelebration } from '@effects/celebration/celebration';
+import '@effects/celebration/celebration.css';
 
 interface HabitCardProps {
     habit: Habit;
     onEdit?: (habit: Habit) => void;
     onDelete?: (habit: Habit) => void;
 }
+
+const POP_ANIMATION_MS = 1000;
 
 /** карточка привычки */
 export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
@@ -72,12 +74,12 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
         }
 
         setCompletionAnimation(true);
-        playHabitCelebration(effectsLayerRef.current);
+        playCelebration(effectsLayerRef.current);
 
         animationTimerRef.current = window.setTimeout(() => {
             setCompletionAnimation(false);
             animationTimerRef.current = null;
-        }, 600);
+        }, POP_ANIMATION_MS);
     }
 
     /** переключение отметки привычки */
@@ -111,7 +113,7 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
 
                 if (!savedCompleted) {
                     setCompletionAnimation(false);
-                    clearHabitCelebration(effectsLayerRef.current);
+                    clearCelebration(effectsLayerRef.current);
                 }
             }
         } catch {
@@ -120,7 +122,7 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
             updateCompletion(currentHabit.id, todayKey, completedToday);
 
             setCompletionAnimation(false);
-            clearHabitCelebration(effectsLayerRef.current);
+            clearCelebration(effectsLayerRef.current);
             setRequestFailed(true);
         } finally {
             setPending(false);
@@ -152,11 +154,7 @@ export default function HabitCard({ habit, onEdit, onDelete }: HabitCardProps) {
     return (
         <article
             className='habit_card'
-            style={
-                {
-                    '--habit-color': currentHabit.color,
-                } as React.CSSProperties
-            }
+            style={{ '--habit-color': currentHabit.color, '--celebration-color': currentHabit.color } as React.CSSProperties}
         >
             <span
                 ref={effectsLayerRef}

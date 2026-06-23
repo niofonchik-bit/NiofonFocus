@@ -1,14 +1,13 @@
-import { getProfile } from '@api/profile';
 import PathIcon from '@components/pathIcon/pathIcon';
 import ThemeToggleButton from '@components/themeToggleButton/themeToggleButton';
 import { mdiCheckAll, mdiCogOutline, mdiFire, mdiHomeOutline, mdiTimerOutline } from '@mdi/js';
 import { useAuth } from '@providers/authProvider/authProvider';
+import { useHabitStatistics } from '@providers/habitsProvider/habitsProvider';
+import { useProfile } from '@providers/profileProvider/profileProvider';
 import Logo from '@root/assets/logo.png';
-import React from 'react';
+import { getDayWord } from '@root/scripts/utilities';
 import { NavLink } from 'react-router-dom';
 import './mainMenu.css';
-import { useHabitStatistics } from '@providers/habitsProvider/habitsProvider';
-import { getDayWord } from '@root/scripts/utilities';
 
 /** элементы главного меню */
 const MAIN_MENU_ITEMS = [
@@ -37,42 +36,11 @@ const MAIN_MENU_ITEMS = [
 /** главное меню приложения */
 export default function MainMenu() {
     const { session } = useAuth();
+    const profile = useProfile();
 
     const { totalCount, completedTodayCount, longestStreak } = useHabitStatistics();
     
-    const [displayName, setDisplayName] = React.useState<string | null>(null);
-
-    const userId = session?.user.id;
-
-    // загрузка данных текущего профиля
-    React.useEffect(() => {
-        let active = true;
-
-        if (!userId) {
-            setDisplayName(null);
-            return;
-        }
-
-        setDisplayName(null);
-
-        void getProfile(userId)
-            .then((profile) => {
-                if (!active) return;
-
-                setDisplayName(profile.display_name);
-            })
-            .catch(() => {
-                if (!active) return;
-
-                setDisplayName(null);
-            });
-
-        return () => {
-            active = false;
-        };
-    }, [userId]);
-
-    const userName = displayName?.trim() || session?.user.email?.split('@')[0] || 'Пользователь';
+    const userName = profile?.display_name?.trim() || session?.user.email?.split('@')[0] || 'Пользователь';
 
     const userInitials = userName
         .split(/\s+/)

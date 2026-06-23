@@ -2,7 +2,7 @@ import { getSettings, updateSettings as updateSettingsRequest, type SettingsChan
 import { useAnimatedTheme, type ThemeMode, type ThemeOrigin } from '@providers/animatedThemeProvider/animatedThemeProvider';
 import { useAuth } from '@providers/authProvider/authProvider';
 import React from 'react';
-import { ACCENT_COLORS, DEFAULT_ACCENT, getAccentName, type AccentName } from '@root/constants/accentColor';
+import { ACCENT_COLORS, ACCENTS, DEFAULT_ACCENT, getAccentName, type AccentName } from '@root/constants/accentColor';
 
 type SettingsContextValue = {
     settings: UserSettings | null;
@@ -11,6 +11,7 @@ type SettingsContextValue = {
     theme: ThemeMode;
     accent: AccentName;
     accentColor: string;
+    accentContrast: string;
     changeSettings: (changes: SettingsChanges, origin?: ThemeOrigin) => Promise<void>;
     changeTheme: (theme: ThemeMode, origin?: ThemeOrigin) => Promise<void>;
     toggleTheme: (origin?: ThemeOrigin) => Promise<void>;
@@ -30,19 +31,17 @@ function normalizeTheme(value: unknown): ThemeMode {
 }
 
 /** получение сохраненного акцентного цвета */
-function getInitialAccent(storageKey: string): AccentName {
+function getInitialAccent(): AccentName {
     if (typeof document === 'undefined') {
         return DEFAULT_ACCENT;
     }
 
-    const documentAccent = document.documentElement.dataset.accent;
-
-    if (documentAccent) {
-        return getAccentName(documentAccent);
-    }
-
     try {
-        return getAccentName(localStorage.getItem(storageKey));
+        const documentAccent = document.documentElement.dataset.accent;
+
+        if (documentAccent) {
+            return getAccentName(documentAccent);
+        }
     } catch {
         return DEFAULT_ACCENT;
     }
@@ -55,10 +54,11 @@ export default function SettingsProvider({ children, accentStorageKey = 'niofon_
 
     const [settings, setSettings] = React.useState<UserSettings | null>(null);
 
-    const [accent, setAccent] = React.useState<AccentName>(() => getInitialAccent(accentStorageKey));
+    const [accent, setAccent] = React.useState<AccentName>(() => getInitialAccent());
 
     /** фактический цвет выбранного акцента */
     const accentColor = ACCENT_COLORS[accent];
+    const accentContrast = ACCENTS[accent].contrast;
 
     const [ready, setReady] = React.useState(false);
     const [error, setError] = React.useState<Error | null>(null);
@@ -68,17 +68,19 @@ export default function SettingsProvider({ children, accentStorageKey = 'niofon_
     React.useLayoutEffect(() => {
         document.documentElement.dataset.accent = accent;
 
-        document.documentElement.style.setProperty('--accent-primary', accentColor);
+        document.documentElement.style.setProperty('--accent-primary', ACCENTS[accent].color);
+        document.documentElement.style.setProperty('--accent-contrast', ACCENTS[accent].contrast);
 
         try {
             localStorage.setItem(accentStorageKey, accent);
 
             // цвет используется только для применения до запуска react
-            localStorage.setItem(`${accentStorageKey}_color`, accentColor);
+            localStorage.setItem(`${accentStorageKey}_color`, ACCENTS[accent].color);
+            localStorage.setItem(`${accentStorageKey}_contrast`, ACCENTS[accent].contrast);
         } catch {
             // localStorage может быть недоступен
         }
-    }, [accent, accentColor, accentStorageKey]);
+    }, [accent, accentStorageKey]);
 
     // загрузка настроек текущего пользователя
     React.useEffect(() => {
@@ -234,12 +236,13 @@ export default function SettingsProvider({ children, accentStorageKey = 'niofon_
             theme,
             accent,
             accentColor,
+            accentContrast,
             changeSettings,
             changeTheme,
             toggleTheme,
             changeAccent,
         }),
-        [settings, ready, error, theme, accent, accentColor, changeSettings, changeTheme, toggleTheme, changeAccent],
+        [settings, ready, error, theme, accent, accentColor, accentContrast, changeSettings, changeTheme, toggleTheme, changeAccent],
     );
 
     return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;

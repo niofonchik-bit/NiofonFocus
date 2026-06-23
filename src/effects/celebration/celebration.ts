@@ -41,7 +41,7 @@ function fireworksPreset(layer: HTMLElement): void {
 
         const rocket = spawnParticle(
             layer,
-            'habit_fx_dot habit_fx_rocket',
+            'fx_dot fx_rocket',
             `left: ${originX.toFixed(1)}%; bottom: 64px; width: 5px; height: 11px; border-radius: 3px; --rise: ${rise.toFixed(0)}px; animation-delay: ${launch * 120}ms;`,
         );
 
@@ -58,7 +58,7 @@ function fireworksPreset(layer: HTMLElement): void {
 
                     spawnParticle(
                         layer,
-                        'habit_fx_dot habit_fx_spark',
+                        'fx_dot fx_spark',
                         `left: ${originX.toFixed(1)}%; bottom: ${(64 - rise).toFixed(0)}px; width: 5px; height: 5px; border-radius: 3px; --x: ${x.toFixed(0)}px; --y: ${y.toFixed(0)}px;`,
                     );
                 }
@@ -79,7 +79,7 @@ function highBurstPreset(layer: HTMLElement): void {
 
         spawnParticle(
             layer,
-            'habit_fx_dot habit_fx_high',
+            'fx_dot fx_high',
             `left: 50%; bottom: 56px; width: 6px; height: 11px; border-radius: 2px; --x: ${x.toFixed(0)}px; --y: ${y.toFixed(0)}px; --r: ${rotation.toFixed(0)}deg; animation-duration: ${random(700, 950).toFixed(0)}ms;`,
         );
     }
@@ -98,7 +98,7 @@ function confettiPreset(layer: HTMLElement): void {
 
         spawnParticle(
             layer,
-            'habit_fx_dot habit_fx_confetti',
+            'fx_dot fx_confetti',
             `left: ${left.toFixed(1)}%; top: -16px; width: 7px; height: 10px; border-radius: 1px; --x: ${drift.toFixed(0)}px; --y: ${fall.toFixed(0)}px; --r: ${rotation.toFixed(0)}deg; animation-duration: ${random(900, 1500).toFixed(0)}ms; animation-delay: ${random(0, 250).toFixed(0)}ms;`,
         );
     }
@@ -115,7 +115,7 @@ function sparklePreset(layer: HTMLElement): void {
 
         const sparkle = spawnParticle(
             layer,
-            'habit_fx_glyph habit_fx_sparkle',
+            'fx_glyph fx_sparkle',
             `left: ${left.toFixed(1)}%; top: ${top.toFixed(1)}%; font-size: ${size.toFixed(0)}px; animation-delay: ${i * 70}ms;`,
         );
 
@@ -136,7 +136,7 @@ function heartsPreset(layer: HTMLElement): void {
 
         const heart = spawnParticle(
             layer,
-            'habit_fx_glyph habit_fx_heart',
+            'fx_glyph fx_heart',
             `left: ${left.toFixed(1)}%; bottom: 40px; font-size: ${size.toFixed(0)}px; --x: ${drift.toFixed(0)}px; --y: ${rise.toFixed(0)}px; --rot: ${rotation.toFixed(0)}deg; animation-duration: ${random(950, 1350).toFixed(0)}ms; animation-delay: ${random(0, 220).toFixed(0)}ms;`,
         );
 
@@ -156,7 +156,7 @@ function shootingStarsPreset(layer: HTMLElement): void {
 
         const star = spawnParticle(
             layer,
-            'habit_fx_glyph habit_fx_shoot',
+            'fx_glyph fx_shoot',
             `left: -12%; top: ${startTop.toFixed(1)}%; font-size: ${size.toFixed(0)}px; --tx: ${travel.toFixed(0)}px; --ty: ${travel.toFixed(0)}px; animation-duration: ${random(750, 1050).toFixed(0)}ms; animation-delay: ${i * 90}ms;`,
         );
 
@@ -168,12 +168,12 @@ function shootingStarsPreset(layer: HTMLElement): void {
 function drawCheck(layer: HTMLElement): void {
     const wrapper = document.createElement('span');
 
-    wrapper.className = 'habit_fx_check';
+    wrapper.className = 'fx_check';
     wrapper.setAttribute('aria-hidden', 'true');
     wrapper.innerHTML =
         '<svg viewBox="0 0 52 52">' +
-        '<circle class="habit_fx_check_ring" cx="26" cy="26" r="23" pathLength="1" />' +
-        '<path class="habit_fx_check_mark" d="M15 27 L23 35 L38 18" pathLength="1" />' +
+        '<circle class="fx_check_ring" cx="26" cy="26" r="23" pathLength="1" />' +
+        '<path class="fx_check_mark" d="M15 27 L23 35 L38 18" pathLength="1" />' +
         '</svg>';
 
     // animationend всплывает от дочерних path/circle — удаляем только по своей анимации
@@ -187,29 +187,38 @@ function drawCheck(layer: HTMLElement): void {
 }
 
 /** случайные пресеты выполнения */
-export const HABIT_RANDOM_PRESETS: CelebrationPreset[] = [
-    fireworksPreset,
-    highBurstPreset,
-    confettiPreset,
-    sparklePreset,
-    heartsPreset,
-    shootingStarsPreset,
-];
+export const CELEBRATION_PRESETS = {
+    fireworks: fireworksPreset,
+    highBurst: highBurstPreset,
+    confetti: confettiPreset,
+    sparkle: sparklePreset,
+    hearts: heartsPreset,
+    shootingStars: shootingStarsPreset,
+} satisfies Record<string, CelebrationPreset>;
 
-/** запуск празднования: всегда галочка + случайный пресет */
-export function playHabitCelebration(layer: HTMLElement | null): void {
-    if (!layer || prefersReducedMotion()) {
-        return;
-    }
+export type CelebrationPresetName = keyof typeof CELEBRATION_PRESETS;
 
-    drawCheck(layer);
+const RANDOM_PRESETS = Object.values(CELEBRATION_PRESETS);
 
-    const preset = HABIT_RANDOM_PRESETS[Math.floor(Math.random() * HABIT_RANDOM_PRESETS.length)];
-
-    preset(layer);
+interface CelebrationOptions {
+    preset?: CelebrationPresetName;
+    withCheck?: boolean;
 }
 
-/** мгновенная очистка слоя (например, при ошибке сохранения) */
-export function clearHabitCelebration(layer: HTMLElement | null): void {
+/** воспроизведение анимации */
+export function playCelebration(layer: HTMLElement | null, options: CelebrationOptions = {}): void {
+    if (!layer || prefersReducedMotion()) return;
+
+    const { preset, withCheck = true } = options;
+
+    if (withCheck) drawCheck(layer);
+
+    const run = preset ? CELEBRATION_PRESETS[preset] : RANDOM_PRESETS[Math.floor(Math.random() * RANDOM_PRESETS.length)];
+
+    run(layer);
+}
+
+/** очищение анимации */
+export function clearCelebration(layer: HTMLElement | null): void {
     layer?.replaceChildren();
 }

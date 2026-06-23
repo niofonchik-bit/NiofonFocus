@@ -11,11 +11,11 @@ export interface HabitWeekDay {
     scheduled: boolean;
 }
 
-export const WEEK_DAY_LABELS = ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'];
+export const WEEK_DAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];;
 
 export const WEEK_DAY_FULL_LABELS = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
 
-export const WEEK_DAY_SHORT_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+const MAX_STREAK_LOOKBACK_DAYS = 4000;
 
 /** получение локального ключа даты */
 export function getDateKey(date = new Date()): string {
@@ -97,7 +97,7 @@ export function getScheduleLabel(
     }
 
     return days
-        .map((day) => WEEK_DAY_SHORT_LABELS[day])
+        .map((day) => WEEK_DAY_LABELS[day])
         .join(' · ');
 }
 
@@ -116,7 +116,7 @@ export function getCurrentStreak(habit: Habit): number {
 
     let streak = 0;
 
-    for (let iteration = 0; iteration < 4000; iteration += 1) {
+    for (let iteration = 0; iteration < MAX_STREAK_LOOKBACK_DAYS; iteration += 1) {
         if (currentDate < createdAt) {
             break;
         }

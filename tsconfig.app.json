@@ -26,10 +26,12 @@
             "@providers/*": ["./src/providers/*"],
             "@components/*": ["./src/components/*"],
             "@pages/*": ["./src/pages/*"],
-            "@layouts/*": ["./src/layouts/*"],
             "@app_types/*": ["./src/types/*"],
+            "@constants/*": ["./src/constants/*"],
+            "@scripts/*": ["./src/scripts/*"],
+            "@effects/*": ["./src/effects/*"],
             "@root/*": ["./src/*"],
-            "@project/*": ["./*"]
+            "@project/*": ["./*"],
         }
     },
     "include": ["src"]

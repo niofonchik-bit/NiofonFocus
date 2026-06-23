@@ -14,7 +14,7 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { signIn, signUp, translateAuthError } from '@root/api/auth';
+import { signIn, signUp, translateAuthError } from '@api/auth';
 import { getPasswordStrength } from '@root/scripts/utilities';
 import { useState, type SyntheticEvent } from 'react';
 import './authPage.css';

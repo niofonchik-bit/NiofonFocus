@@ -2,9 +2,9 @@ import PathIcon from '@components/pathIcon/pathIcon';
 import { mdiCheckAll, mdiRefresh } from '@mdi/js';
 import { Alert, Button, CircularProgress } from '@mui/material';
 import { useHabitsCollection } from '@providers/habitsProvider/habitsProvider';
-import HabitList from './habitList';
+import HabitList from './components/habitList';
 import './habitPage.css';
-import HabitPageHeader from './habitPageHeader';
+import HabitPageHeader from './components/habitPageHeader';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -30,10 +30,8 @@ export default function HabitPage() {
     const location = useLocation();
 
     // обновление данных при каждом открытии страницы
-    React.useLayoutEffect(() => {
-        if (location.pathname !== '/habits') {
-            return;
-        }
+    React.useEffect(() => {
+        if (location.pathname !== '/habits') return;
 
         reload();
     }, [location.key, location.pathname, reload]);

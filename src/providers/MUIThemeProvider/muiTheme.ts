@@ -1,16 +1,17 @@
+import type { ThemeOptions } from '@mui/material';
+
 /** стили автозаполнения */
 const autofillStyles = {
     '&:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active, &:autofill': {
-        WebkitBoxShadow:
-            '0 0 0 1000px var(--input-background, var(--surface-secondary)) inset',
+        WebkitBoxShadow: '0 0 0 1000px var(--input-background, var(--surface-secondary)) inset',
         WebkitTextFillColor: 'var(--text-primary)',
         caretColor: 'var(--text-primary)',
         borderRadius: 'inherit',
     },
-};
+} as const;
 
 /** тема компонентов mui */
-export default {
+const MUITheme: ThemeOptions = {
     components: {
         MuiInputBase: {
             styleOverrides: {
@@ -26,8 +27,7 @@ export default {
                     color: 'var(--text-primary)',
                     backgroundColor: 'var(--input-background)',
 
-                    transition:
-                        'background-color 0.18s ease, box-shadow 0.18s ease',
+                    transition: 'background-color 0.18s ease, box-shadow 0.18s ease',
 
                     '&.Mui-focused': {
                         '--input-background': 'var(--surface-primary)',
@@ -60,3 +60,5 @@ export default {
         },
     },
 };
+
+export default MUITheme;
