@@ -4,9 +4,9 @@ import PathIcon from '@components/pathIcon/pathIcon';
 import ThemeToggleButton from '@components/themeToggleButton/themeToggleButton';
 import { mdiAccountOutline, mdiCheck, mdiEmailOutline, mdiEyeOffOutline, mdiEyeOutline, mdiLockOutline } from '@mdi/js';
 import { Alert, Box, Button, Checkbox, FormControlLabel, IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material';
-import { getPasswordStrength } from '@root/scripts/utilities';
 import { useState, type SyntheticEvent } from 'react';
 import './authPage.css';
+import { getPasswordStrength } from '@utils/password';
 
 type AuthMode = 'login' | 'register';
 

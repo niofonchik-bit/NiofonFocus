@@ -13,29 +13,23 @@
 .main_page::after {
     content: '';
     position: absolute;
-    inset: -30%;              /* запас за краями: при движении/вращении не оголяются углы */
+    inset: -30%;
     z-index: -1;
     pointer-events: none;
     will-change: transform;
 }
 
-/* слой A — основной тон акцента */
 .main_page::before {
     background:
-        radial-gradient(closest-side at 78% 14%,
-            color-mix(in srgb, var(--accent-primary) 26%, transparent), transparent),
-        radial-gradient(closest-side at 36% 86%,
-            color-mix(in srgb, var(--accent-primary) 15%, transparent), transparent);
+        radial-gradient(closest-side at 78% 14%, color-mix(in srgb, var(--accent-primary) 26%, transparent), transparent),
+        radial-gradient(closest-side at 36% 86%, color-mix(in srgb, var(--accent-primary) 15%, transparent), transparent);
     filter: blur(40px) saturate(115%);
 }
 
-/* слой B — тот же акцент, но сдвинут по тону → «меш» из двух цветов */
 .main_page::after {
     background:
-        radial-gradient(closest-side at 92% 80%,
-            color-mix(in srgb, var(--accent-primary) 22%, transparent), transparent),
-        radial-gradient(closest-side at 34% 28%,
-            color-mix(in srgb, var(--accent-primary) 13%, transparent), transparent);
+        radial-gradient(closest-side at 92% 80%, color-mix(in srgb, var(--accent-primary) 22%, transparent), transparent),
+        radial-gradient(closest-side at 34% 28%, color-mix(in srgb, var(--accent-primary) 13%, transparent), transparent);
     filter: blur(50px) hue-rotate(40deg) saturate(120%);
 }
 

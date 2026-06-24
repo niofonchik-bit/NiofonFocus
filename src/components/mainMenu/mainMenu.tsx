@@ -5,9 +5,9 @@ import { useAuth } from '@providers/authProvider/authProvider';
 import { useHabitStatistics } from '@providers/habitsProvider/habitsProvider';
 import { useProfile } from '@providers/profileProvider/profileProvider';
 import Logo from '@root/assets/logo.png';
-import { getDayWord } from '@root/scripts/utilities';
 import { NavLink } from 'react-router-dom';
 import './mainMenu.css';
+import { getDayWord } from '@utils/plural';
 
 /** элементы главного меню */
 const MAIN_MENU_ITEMS = [

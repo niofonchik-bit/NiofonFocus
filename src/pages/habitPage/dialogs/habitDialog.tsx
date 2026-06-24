@@ -6,9 +6,9 @@ import { mdiCalendarBlankOutline, mdiCheck, mdiFire, mdiPlus } from '@mdi/js';
 import { Button } from '@mui/material';
 import { DEFAULT_HABIT_COLOR, HABIT_COLORS } from '@root/constants/habitColors';
 import { getHabitIconPath, HABIT_ICONS } from '@root/constants/habitIcons';
-import { getScheduleLabel, WEEK_DAY_LABELS } from '@root/scripts/utilities';
 import React from 'react';
 import './habitDialog.css';
+import { getScheduleLabel, WEEK_DAY_LABELS } from '@utils/habits';
 
 interface HabitDialogProps {
     /** привычка для редактирования; null — создание */

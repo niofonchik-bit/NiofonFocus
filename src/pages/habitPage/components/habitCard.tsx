@@ -7,16 +7,9 @@ import '@effects/celebration/celebration.css';
 import { mdiCheck, mdiDeleteOutline, mdiDotsVertical, mdiFire, mdiPencilOutline, mdiStarFourPointsOutline } from '@mdi/js';
 import { Button, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material';
 import { useHabitActions } from '@providers/habitsProvider/habitsProvider';
-import {
-    getBonusStreak,
-    getBonusStreakLabel,
-    getCurrentStreak,
-    getDateKey,
-    getDayWord,
-    getHabitWeek,
-    getStreakLabel,
-    isHabitScheduled,
-} from '@scripts/utilities';
+import { getDateKey } from '@utils/date';
+import { getBonusStreak, getBonusStreakLabel, getCurrentStreak, getHabitWeek, getStreakLabel, isHabitScheduled } from '@utils/habits';
+import { getDayWord } from '@utils/plural';
 import React from 'react';
 
 interface HabitCardProps {

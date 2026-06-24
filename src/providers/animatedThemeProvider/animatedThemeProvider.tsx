@@ -92,8 +92,8 @@ function getTransitionOrigin(origin?: ThemeOrigin) {
     }
 
     return {
-        x: document.documentElement.clientWidth / 2,
-        y: document.documentElement.clientHeight / 2,
+        x: 50,
+        y: 50,
     };
 }
 

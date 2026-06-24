@@ -1,40 +1,19 @@
 import { type Habit, type NewHabit } from '@api/habits';
 import AppLoader from '@components/appLoader/appLoader';
 import PathIcon from '@components/pathIcon/pathIcon';
-import { mdiCheckAll, mdiRefresh } from '@mdi/js';
+import { mdiRefresh } from '@mdi/js';
 import { Alert, Button } from '@mui/material';
 import { useHabitActions, useHabitsCollection } from '@providers/habitsProvider/habitsProvider';
-import HabitDeleteDialog from '@root/dialogs/habitDialog/habitDeleteDialog';
-import HabitDialog from '@root/dialogs/habitDialog/habitDialog';
+import HabitDeleteDialog from '@pages/habitPage/dialogs/habitDeleteDialog';
+import HabitDialog from '@pages/habitPage/dialogs/habitDialog';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import HabitList from './components/habitList';
 import HabitPageHeader from './components/habitPageHeader';
 import './habitPage.css';
+import HabitEmptyState from './components/habitEmptyState';
 
 type DialogState = { mode: 'create' } | { mode: 'edit'; habit: Habit } | null;
-
-function HabitEmptyState({ onCreate }: { onCreate: () => void }) {
-    return (
-        <div className='habit_page_empty'>
-            <span className='habit_page_empty_icon'>
-                <PathIcon path={mdiCheckAll} />
-            </span>
-
-            <h2>Пока ни одной привычки</h2>
-
-            <p>Начните с малого — добавьте первую привычку и отмечайте её каждый день, не разрывая цепочку.</p>
-
-            <Button
-                variant='contained'
-                disableElevation
-                onClick={onCreate}
-            >
-                Создать первую привычку
-            </Button>
-        </div>
-    );
-}
 
 export default function HabitPage() {
     const { habits, loading, error, reload } = useHabitsCollection();

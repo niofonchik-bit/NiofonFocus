@@ -1,4 +1,5 @@
 import type { CSSProperties } from '@mui/material';
+import useReducedMotion from '@root/hooks/useReducedMotion';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { useLocation, useMatches, useNavigationType, useOutlet } from 'react-router-dom';
 import './animatedOutlet.css';
@@ -56,33 +57,7 @@ type AnimatedOutletProps = {
 
 /** получение параметров перехода */
 function getTransitionOptions(location: RouterLocation) {
-    return (
-        (location.state as TransitionLocationState | null)?.pageTransition ?? {}
-    );
-}
-
-/** проверка уменьшения движения */
-function useReducedMotion() {
-    const [reducedMotion, setReducedMotion] = useState(false);
-    useEffect(() => {
-        const mediaQuery = window.matchMedia(
-            '(prefers-reduced-motion: reduce)',
-        );
-
-        function updateReducedMotion() {
-            setReducedMotion(mediaQuery.matches);
-        }
-
-        updateReducedMotion();
-
-        mediaQuery.addEventListener('change', updateReducedMotion);
-
-        return () => {
-            mediaQuery.removeEventListener('change', updateReducedMotion);
-        };
-    }, []);
-
-    return reducedMotion;
+    return (location.state as TransitionLocationState | null)?.pageTransition ?? {};
 }
 
 /** анимированный выход маршрута */
@@ -102,7 +77,7 @@ export default function AnimatedOutlet({
     const reducedMotion = useReducedMotion();
 
     const locationKey = getKey(location);
-    
+
     const matches = useMatches();
 
     const currentRoute = [...matches]
@@ -112,14 +87,12 @@ export default function AnimatedOutlet({
         })
         .find((handle) => handle?.pageTransition)?.pageTransition;
 
-    const [displayedPage, setDisplayedPage] = useState<TransitionSnapshot>(
-        () => ({
-            key: locationKey,
-            outlet,
-            location,
-            route: currentRoute,
-        }),
-    );
+    const [displayedPage, setDisplayedPage] = useState<TransitionSnapshot>(() => ({
+        key: locationKey,
+        outlet,
+        location,
+        route: currentRoute,
+    }));
 
     const [phase, setPhase] = useState<'idle' | 'exit' | 'enter'>('idle');
 
@@ -162,7 +135,7 @@ export default function AnimatedOutlet({
         getDirection,
     };
 
-   useLayoutEffect(() => {
+    useLayoutEffect(() => {
         const latestValues = latestValuesRef.current;
         const previousPage = displayedPageRef.current;
 
@@ -181,10 +154,7 @@ export default function AnimatedOutlet({
         };
 
         // проверка отключения анимации
-        const shouldReduceMotion =
-            latestValues.disabled ||
-            (latestValues.respectReducedMotion &&
-                latestValues.reducedMotion);
+        const shouldReduceMotion = latestValues.disabled || (latestValues.respectReducedMotion && latestValues.reducedMotion);
 
         if (shouldReduceMotion) {
             displayedPageRef.current = nextPage;
@@ -194,13 +164,9 @@ export default function AnimatedOutlet({
             return;
         }
 
-        const previousOptions = getTransitionOptions(
-            previousPage.location,
-        );
+        const previousOptions = getTransitionOptions(previousPage.location);
 
-        const nextOptions = getTransitionOptions(
-            nextPage.location,
-        );
+        const nextOptions = getTransitionOptions(nextPage.location);
 
         let direction = nextOptions.direction;
 
@@ -216,25 +182,12 @@ export default function AnimatedOutlet({
 
         // определение направления перехода
         if (!direction) {
-            if (
-                previousPage.location.pathname ===
-                nextPage.location.pathname
-            ) {
+            if (previousPage.location.pathname === nextPage.location.pathname) {
                 direction = 'refresh';
-            } else if (
-                previousPage.route &&
-                nextPage.route
-            ) {
-                direction =
-                    nextPage.route.level >=
-                    previousPage.route.level
-                        ? 'forward'
-                        : 'back';
+            } else if (previousPage.route && nextPage.route) {
+                direction = nextPage.route.level >= previousPage.route.level ? 'forward' : 'back';
             } else {
-                direction =
-                    latestValues.navigationType === 'POP'
-                        ? 'back'
-                        : 'forward';
+                direction = latestValues.navigationType === 'POP' ? 'back' : 'forward';
             }
         }
 
@@ -242,26 +195,13 @@ export default function AnimatedOutlet({
         let preset: TransitionPreset;
 
         if (direction === 'back') {
-            preset =
-                nextOptions.preset ??
-                previousOptions.preset ??
-                previousPage.route?.preset ??
-                nextPage.route?.preset ??
-                'slide';
+            preset = nextOptions.preset ?? previousOptions.preset ?? previousPage.route?.preset ?? nextPage.route?.preset ?? 'slide';
         } else {
-            preset =
-                nextOptions.preset ??
-                nextPage.route?.preset ??
-                'slide';
+            preset = nextOptions.preset ?? nextPage.route?.preset ?? 'slide';
         }
 
         // определение точки начала перехода
-        const originY =
-            direction === 'back'
-                ? previousOptions.originY ??
-                  nextOptions.originY ??
-                  null
-                : nextOptions.originY ?? null;
+        const originY = direction === 'back' ? (previousOptions.originY ?? nextOptions.originY ?? null) : (nextOptions.originY ?? null);
 
         setAnimation({
             direction,
@@ -292,42 +232,26 @@ export default function AnimatedOutlet({
         };
     }, []);
 
-    const effectiveExitDuration =
-        respectReducedMotion && reducedMotion
-            ? 0
-            : exitDuration;
+    const effectiveExitDuration = respectReducedMotion && reducedMotion ? 0 : exitDuration;
 
-    const effectiveEnterDuration =
-        respectReducedMotion && reducedMotion
-            ? 0
-            : enterDuration;
+    const effectiveEnterDuration = respectReducedMotion && reducedMotion ? 0 : enterDuration;
 
     const transitionStyle = {
         '--route-transition-exit-duration': `${effectiveExitDuration}ms`,
         '--route-transition-enter-duration': `${effectiveEnterDuration}ms`,
-        '--route-transition-origin-y':
-            animation.originY === null
-                ? 'top'
-                : `${animation.originY}px`,
+        '--route-transition-origin-y': animation.originY === null ? 'top' : `${animation.originY}px`,
     } as CSSProperties;
 
     return (
         <div
-            className={[
-                'route_transition',
-                className,
-            ]
-                .filter(Boolean)
-                .join(' ')}
+            className={['route_transition', className].filter(Boolean).join(' ')}
             style={transitionStyle}
             data-phase={phase}
             data-direction={animation.direction}
             data-preset={animation.preset}
             data-route-transition-root
         >
-            <Suspense fallback={fallback}>
-                {displayedPage.outlet}
-            </Suspense>
+            <Suspense fallback={fallback}>{displayedPage.outlet}</Suspense>
         </div>
     );
 }

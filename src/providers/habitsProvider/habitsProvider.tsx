@@ -9,7 +9,7 @@ import {
     type NewHabit,
 } from '@api/habits';
 import { useAuth } from '@providers/authProvider/authProvider';
-import { getHabitStatistics, type HabitStatistics } from '@root/scripts/utilities';
+import { getHabitStatistics, type HabitStatistics } from '@utils/habits';
 import React from 'react';
 
 interface HabitsProviderProps {
