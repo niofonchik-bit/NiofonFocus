@@ -1,0 +1,331 @@
+.activity_map {
+    --cell-size: 15px;
+    --cell-gap: 4px;
+    --cell-step: calc(var(--cell-size) + var(--cell-gap));
+}
+
+.activity_map_header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.activity_map_subtitle {
+    margin: 4px 0 0;
+    color: var(--text-disabled);
+    font-size: 12.5px;
+    font-weight: 550;
+}
+
+/* выбор периода */
+
+.activity_period {
+    display: inline-flex;
+    flex-shrink: 0;
+    gap: 2px;
+    padding: 3px;
+    border-radius: 11px;
+    background: var(--surface-secondary);
+}
+
+.activity_period_option {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    background: transparent;
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        color 0.2s ease,
+        background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.18s ease,
+        box-shadow 0.25s ease;
+}
+
+.activity_period_option:hover {
+    color: var(--text-primary);
+}
+
+.activity_period_option_active {
+    color: var(--accent-contrast);
+    background: var(--accent-primary);
+    box-shadow: 0 3px 10px color-mix(in srgb, var(--accent-primary) 32%, transparent);
+}
+
+.activity_period_option_active:hover {
+    color: var(--accent-contrast);
+}
+
+.activity_period_option:active {
+    transform: scale(0.94);
+}
+
+/* прокручиваемая область карты */
+
+.activity_map_scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--text-disabled) 40%, transparent) transparent;
+    scroll-behavior: smooth;
+}
+
+.activity_map_scroll::-webkit-scrollbar {
+    height: 7px;
+}
+
+.activity_map_scroll::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--text-disabled) 40%, transparent);
+}
+
+.activity_map_canvas {
+    display: inline-flex;
+    flex-direction: column;
+    min-width: 100%;
+}
+
+/* месяцы */
+
+.activity_map_months {
+    position: relative;
+    height: 16px;
+    margin-bottom: 6px;
+}
+
+.activity_map_month {
+    position: absolute;
+    top: 0;
+    left: calc(var(--col) * var(--cell-step));
+    color: var(--text-disabled);
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* сетка дней */
+
+.activity_map_grid {
+    display: flex;
+    gap: var(--cell-gap);
+}
+
+.activity_map_week {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cell-gap);
+}
+
+.activity_map_cell {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: var(--surface-secondary);
+    cursor: pointer;
+    transition:
+        transform 0.16s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.16s ease,
+        background-color 0.2s ease;
+    animation: activity_cell_in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(min(var(--cell-index, 0), 32) * 14ms);
+}
+
+.activity_map_cell:hover,
+.activity_map_cell_active {
+    transform: scale(1.32);
+    box-shadow:
+        0 0 0 2px var(--surface-primary),
+        0 0 0 3.5px color-mix(in srgb, var(--accent-primary) 70%, transparent);
+    z-index: 1;
+}
+
+.activity_map_cell_future {
+    background: color-mix(in srgb, var(--surface-secondary) 50%, transparent);
+    cursor: default;
+}
+
+.activity_map_cell_future:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* уровни закраски (используются и в легенде) */
+
+.activity_map_cell_level_0 {
+    background: var(--surface-secondary);
+}
+
+.activity_map_cell_level_1 {
+    background: color-mix(in srgb, var(--accent-primary) 26%, var(--surface-secondary));
+}
+
+.activity_map_cell_level_2 {
+    background: color-mix(in srgb, var(--accent-primary) 48%, var(--surface-secondary));
+}
+
+.activity_map_cell_level_3 {
+    background: color-mix(in srgb, var(--accent-primary) 72%, var(--surface-secondary));
+}
+
+.activity_map_cell_level_4 {
+    background: var(--accent-primary);
+}
+
+/* легенда */
+
+.activity_map_legend {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+    color: var(--text-disabled);
+    font-size: 11.5px;
+    font-weight: 550;
+}
+
+.activity_map_legend_cells {
+    display: inline-flex;
+    gap: 3px;
+}
+
+.activity_map_legend_cells i {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+/* всплывающая сводка за день */
+
+.activity_tooltip {
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 184px;
+    padding: 12px 14px;
+    pointer-events: none;
+    border: 1px solid var(--border-primary);
+    border-radius: 12px;
+    background: var(--surface-primary);
+    box-shadow: var(--shadow-elevated);
+    transition:
+        left 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+        top 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: activity_tooltip_in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.activity_tooltip_date {
+    color: var(--text-primary);
+    font-size: 13.5px;
+    font-weight: 700;
+}
+
+.activity_tooltip_rows {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.activity_tooltip_row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--text-secondary);
+    font-size: 12.5px;
+    font-weight: 550;
+}
+
+.activity_tooltip_row b {
+    margin-left: auto;
+    color: var(--text-primary);
+    font-family: var(--font-num, 'Space Grotesk', monospace);
+    font-weight: 700;
+}
+
+.activity_tooltip_row svg {
+    width: 15px;
+    height: 15px;
+    font-size: 15px;
+    color: var(--text-disabled);
+}
+
+.activity_tooltip_badge {
+    padding: 4px 9px;
+    border-radius: 7px;
+    color: var(--accent-primary);
+    background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+    font-size: 11.5px;
+    font-weight: 650;
+    text-align: center;
+}
+
+.activity_tooltip_badge_full {
+    color: #18a058;
+    background: color-mix(in srgb, #18a058 14%, transparent);
+}
+
+.activity_tooltip_arrow {
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    transform: translateX(-50%) rotate(45deg);
+    border-right: 1px solid var(--border-primary);
+    border-bottom: 1px solid var(--border-primary);
+    background: var(--surface-primary);
+}
+
+.activity_tooltip_below .activity_tooltip_arrow {
+    top: -5px;
+    bottom: auto;
+    border: none;
+    border-top: 1px solid var(--border-primary);
+    border-left: 1px solid var(--border-primary);
+}
+
+@keyframes activity_cell_in {
+    from {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes activity_tooltip_in {
+    from {
+        opacity: 0;
+        transform: translate(-50%, calc(var(--tooltip-shift, -100%) + 6px)) scale(0.92);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .activity_map_cell,
+    .activity_tooltip {
+        animation: none;
+        transition: none;
+    }
+
+    .activity_map_cell:hover,
+    .activity_map_cell_active {
+        transform: none;
+    }
+
+    .activity_map_scroll {
+        scroll-behavior: auto;
+    }
+}

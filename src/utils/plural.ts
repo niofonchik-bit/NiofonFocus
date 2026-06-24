@@ -18,6 +18,7 @@ export function getDayWord(value: number): string {
     return 'дней';
 }
 
+/** получение формы слова сессия */
 export function getSessionWord(value: number): string {
     const lastTwoDigits = value % 100;
     const lastDigit = value % 10;
@@ -35,4 +36,44 @@ export function getSessionWord(value: number): string {
     }
 
     return 'сессий';
+}
+
+/** получение формы слова неделя */
+export function getWeekWord(value: number): string {
+    const lastTwoDigits = value % 100;
+    const lastDigit = value % 10;
+
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+        return 'недель';
+    }
+
+    if (lastDigit === 1) {
+        return 'неделя';
+    }
+
+    if (lastDigit >= 2 && lastDigit <= 4) {
+        return 'недели';
+    }
+
+    return 'недель';
+}
+
+/** получение формы слова отметка */
+export function getMarkWord(value: number): string {
+    const lastTwoDigits = value % 100;
+    const lastDigit = value % 10;
+
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+        return 'отметок';
+    }
+
+    if (lastDigit === 1) {
+        return 'отметка';
+    }
+
+    if (lastDigit >= 2 && lastDigit <= 4) {
+        return 'отметки';
+    }
+
+    return 'отметок';
 }

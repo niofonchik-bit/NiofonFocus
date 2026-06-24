@@ -78,6 +78,32 @@ export function getCurrentStreak(habit: Habit): number {
     return streak;
 }
 
+/** получение рекордной цепочки привычки за всё время */
+export function getRecordStreak(habit: Habit): number {
+    const completions = new Set(habit.completions);
+    const createdAt = parseDateKey(habit.createdAt);
+    const today = new Date();
+
+    let currentDate = new Date(createdAt);
+    let streak = 0;
+    let record = 0;
+
+    for (let iteration = 0; iteration < MAX_STREAK_LOOKBACK_DAYS && currentDate <= today; iteration += 1) {
+        if (isHabitScheduled(habit, currentDate)) {
+            if (completions.has(getDateKey(currentDate))) {
+                streak += 1;
+                record = Math.max(record, streak);
+            } else {
+                streak = 0;
+            }
+        }
+
+        currentDate = addDays(currentDate, 1);
+    }
+
+    return record;
+}
+
 /** получение бонус-цепочки — выполнений вне расписания подряд */
 export function getBonusStreak(habit: Habit): number {
     // у ежедневных привычек внеплановых дней нет

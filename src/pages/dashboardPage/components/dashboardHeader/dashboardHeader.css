@@ -1,0 +1,54 @@
+.dashboard_header {
+    padding-bottom: 28px;
+    animation: dashboard_header_in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.dashboard_header_eyebrow {
+    margin: 0 0 6px;
+    color: var(--text-disabled);
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.4;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.dashboard_header_title {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+}
+
+.dashboard_header_subtitle {
+    margin: 6px 0 0;
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+@keyframes dashboard_header_in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (max-width: 560px) {
+    .dashboard_header_title {
+        font-size: 26px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard_header {
+        animation: none;
+    }
+}

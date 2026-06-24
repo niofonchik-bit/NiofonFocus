@@ -1,0 +1,134 @@
+.stat_cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.stat_card {
+    --stat-accent: var(--accent-primary);
+
+    display: flex;
+    position: relative;
+    align-items: center;
+    gap: 14px;
+    padding: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border-primary);
+    border-radius: 16px;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--stat-accent) 9%, transparent), transparent 55%), var(--surface-primary);
+    box-shadow: var(--shadow-primary);
+    transition:
+        transform 0.18s cubic-bezier(0.32, 0.72, 0, 1),
+        box-shadow 0.22s cubic-bezier(0.32, 0.72, 0, 1),
+        border-color 0.2s ease;
+    animation: stat_card_in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--enter-index, 0) * 80ms);
+}
+
+.stat_card:hover {
+    border-color: color-mix(in srgb, var(--stat-accent) 28%, var(--border-primary));
+    box-shadow:
+        0 8px 24px color-mix(in srgb, var(--stat-accent) 14%, transparent),
+        var(--shadow-primary);
+    transform: translateY(-3px);
+}
+
+.stat_card_icon {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 13px;
+    color: var(--stat-accent);
+    background: color-mix(in srgb, var(--stat-accent) 14%, transparent);
+}
+
+.stat_card_icon svg {
+    width: 22px;
+    height: 22px;
+    font-size: 22px;
+}
+
+.stat_card_body {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stat_card_value {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    color: var(--text-primary);
+    font-family: var(--font-num, 'Space Grotesk', monospace);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+}
+
+.stat_card_total {
+    color: var(--text-disabled);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.stat_card_label {
+    overflow: hidden;
+    color: var(--text-secondary);
+    font-size: 12.5px;
+    font-weight: 550;
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stat_card_hint {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: var(--text-disabled);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+@keyframes stat_card_in {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (max-width: 880px) {
+    .stat_cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .stat_cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (hover: none) {
+    .stat_card:hover {
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stat_card {
+        animation: none;
+        transition: none;
+    }
+}

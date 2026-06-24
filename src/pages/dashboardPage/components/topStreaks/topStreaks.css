@@ -1,0 +1,131 @@
+.top_streaks {
+    display: flex;
+    flex-direction: column;
+}
+
+.top_streaks_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.top_streaks_trophy {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    border-radius: 9px;
+    color: #d98a16;
+    background: color-mix(in srgb, #d98a16 14%, transparent);
+}
+
+.top_streaks_trophy svg {
+    width: 17px;
+    height: 17px;
+    font-size: 17px;
+}
+
+.top_streaks_list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.top_streaks_item {
+    --streak-color: var(--accent-primary);
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 8px;
+    border-radius: 12px;
+    transition: background-color 0.18s ease;
+    animation: top_streaks_in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--enter-index, 0) * 90ms + 120ms);
+}
+
+.top_streaks_item:hover {
+    background: var(--surface-secondary);
+}
+
+.top_streaks_icon {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 11px;
+    color: var(--streak-color);
+    background: color-mix(in srgb, var(--streak-color) 15%, transparent);
+}
+
+.top_streaks_icon svg {
+    width: 19px;
+    height: 19px;
+    font-size: 19px;
+}
+
+.top_streaks_info {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.top_streaks_title {
+    overflow: hidden;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.top_streaks_record {
+    color: var(--text-disabled);
+    font-size: 12px;
+    font-weight: 550;
+}
+
+.top_streaks_value {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    color: #ff7a18;
+    font-family: var(--font-num, 'Space Grotesk', monospace);
+    font-size: 15px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.top_streaks_value svg {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+}
+
+@keyframes top_streaks_in {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .top_streaks_item {
+        animation: none;
+        transition: none;
+    }
+}
