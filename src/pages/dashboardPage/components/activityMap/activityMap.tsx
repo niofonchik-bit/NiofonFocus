@@ -21,7 +21,7 @@ const CELL_GAP = 4;
 const MONTHS_BLOCK = 22; // высота строки месяцев (16px) + margin-bottom (6px)
 const DESKTOP_QUERY = '(min-width: 981px)';
 
-const TOOLTIP_DELAY = 140;
+const TOOLTIP_DELAY = 300;
 
 /** карта активности */
 export default function ActivityMap({ habits }: ActivityMapProps) {
