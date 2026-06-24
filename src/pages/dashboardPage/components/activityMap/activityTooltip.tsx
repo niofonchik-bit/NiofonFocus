@@ -2,6 +2,7 @@ import PathIcon from '@components/pathIcon/pathIcon';
 import { mdiCalendarBlankOutline, mdiCheckCircleOutline } from '@mdi/js';
 import { formatDayLong, type ActivityDay } from '@utils/dashboard';
 import React from 'react';
+import { createPortal } from 'react-dom';
 
 interface ActivityTooltipProps {
     day: ActivityDay;
@@ -37,7 +38,7 @@ export default function ActivityTooltip({ day, rect }: ActivityTooltipProps) {
         badge = `${Math.round((done / planned) * 100)}% выполнено`;
     }
 
-    return (
+    return createPortal(
         <div
             className={['activity_tooltip', placeBelow ? 'activity_tooltip_below' : ''].filter(Boolean).join(' ')}
             style={style}
@@ -62,6 +63,8 @@ export default function ActivityTooltip({ day, rect }: ActivityTooltipProps) {
             <span className={['activity_tooltip_badge', allDone ? 'activity_tooltip_badge_full' : ''].filter(Boolean).join(' ')}>{badge}</span>
 
             <span className='activity_tooltip_arrow' />
-        </div>
+        </div>,
+
+        document.body,
     );
 }

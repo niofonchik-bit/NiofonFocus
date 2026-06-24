@@ -311,44 +311,7 @@
     }
 
     .main_menu_footer {
-        flex-direction: row;
-        align-items: center;
-        flex-shrink: 0;
-        gap: 6px;
-        margin-top: 0;
-    }
-
-    .main_menu_streak {
         display: none;
-    }
-
-    .main_menu_user_bar {
-        gap: 6px;
-    }
-
-    .main_menu_user {
-        width: 40px;
-        height: 40px;
-        flex: 0 0 40px;
-        justify-content: center;
-        padding: 0;
-        border-radius: 50%;
-    }
-
-    .main_menu_user_avatar {
-        width: 32px;
-        height: 32px;
-    }
-
-    .main_menu_user_info {
-        display: none;
-    }
-
-    .main_menu_footer .main_menu_theme_toggle {
-        width: 40px;
-        height: 40px;
-        flex-basis: 40px;
-        border-radius: 50%;
     }
 }
 

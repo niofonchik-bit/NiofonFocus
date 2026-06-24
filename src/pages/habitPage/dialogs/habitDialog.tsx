@@ -282,7 +282,7 @@ export default function HabitDialog({ open, habit, submitting = false, error, on
                     disabled={submitting}
                     startIcon={submitting ? <InlineLoader /> : <PathIcon path={editing ? mdiCheck : mdiPlus} />}
                 >
-                    {editing ? 'Сохранить' : 'Создать привычку'}
+                    {editing ? 'Сохранить' : 'Создать'}
                 </Button>
             </AppDialog.Actions>
         </AppDialog>

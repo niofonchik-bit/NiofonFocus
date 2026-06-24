@@ -15,10 +15,15 @@ interface HoverState {
     rect: DOMRect;
 }
 
+const BASE_CELL = 15;
+const CELL_GAP = 4;
+
 /** карта активности */
 export default function ActivityMap({ habits }: ActivityMapProps) {
     const [period, setPeriod] = React.useState(DEFAULT_ACTIVITY_PERIOD);
     const [hover, setHover] = React.useState<HoverState | null>(null);
+
+    const [cellSize, setCellSize] = React.useState(BASE_CELL);
 
     const scrollRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -33,6 +38,22 @@ export default function ActivityMap({ habits }: ActivityMapProps) {
             node.scrollLeft = node.scrollWidth;
         }
     }, [weeks]);
+
+    React.useLayoutEffect(() => {
+        const node = scrollRef.current;
+        if (!node) return;
+
+        const recompute = () => {
+            const available = node.clientWidth;
+            const fit = Math.floor((available - (data.weeks.length - 1) * CELL_GAP) / data.weeks.length);
+            setCellSize(Math.max(BASE_CELL, fit));
+        };
+
+        recompute();
+        const ro = new ResizeObserver(recompute);
+        ro.observe(node);
+        return () => ro.disconnect();
+    }, [data.weeks.length]);
 
     function showTooltip(target: HTMLElement, day: ActivityDay) {
         if (day.future) {
@@ -62,7 +83,7 @@ export default function ActivityMap({ habits }: ActivityMapProps) {
     return (
         <section
             className='activity_map dashboard_card'
-            style={{ '--enter-index': 1 } as React.CSSProperties}
+            style={{ '--enter-index': 1, '--cell-size': `${cellSize}px` } as React.CSSProperties}
             aria-label='Карта активности'
         >
             <header className='activity_map_header'>
@@ -85,7 +106,10 @@ export default function ActivityMap({ habits }: ActivityMapProps) {
                 className='activity_map_scroll'
                 ref={scrollRef}
             >
-                <div className='activity_map_canvas'>
+                <div
+                    className='activity_map_canvas'
+                    key={period}
+                >
                     <div className='activity_map_months'>
                         {data.monthLabels.map((month) => (
                             <span

@@ -33,6 +33,7 @@
 .app_dialog_actions.MuiDialogActions-root {
     display: flex;
     justify-content: space-between;
+    align-items: stretch;
     gap: 16px;
     padding: 24px 28px 28px;
 }

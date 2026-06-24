@@ -11,8 +11,8 @@
 .timer_page_foot b { color: var(--text-primary); font-family: var(--font-num, "Space Grotesk", monospace); }
 
 @media (max-width: 880px) {
-    .timer_page_content { padding: 24px 16px 0; }
-    /* кольцо до 280px, цифры до 60px — как в focus.css:584 */
+    .timer_page_content { padding: 16px 16px 0; }
+    .timer_page_stage { gap: 20px; padding: 8px 0 24px; }
     .progress_ring { width: 280px !important; height: 280px !important; }
     .timer_clock { font-size: 60px; }
 }

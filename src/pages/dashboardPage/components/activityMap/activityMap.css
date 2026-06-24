@@ -89,6 +89,12 @@
     display: inline-flex;
     flex-direction: column;
     min-width: 100%;
+    animation: activity_canvas_in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes activity_canvas_in {
+    from { opacity: 0; transform: scale(0.985); }
+    to   { opacity: 1; transform: none; }
 }
 
 /* месяцы */
@@ -315,6 +321,7 @@
 
 @media (prefers-reduced-motion: reduce) {
     .activity_map_cell,
+    .activity_map_canvas,
     .activity_tooltip {
         animation: none;
         transition: none;

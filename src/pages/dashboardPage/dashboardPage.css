@@ -51,7 +51,7 @@
     display: grid;
     grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
     gap: 20px;
-    align-items: start;
+    align-items: stretch;
 }
 
 /* общая «карточка» секции */
