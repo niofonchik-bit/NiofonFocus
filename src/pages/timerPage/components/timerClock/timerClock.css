@@ -1,0 +1,57 @@
+.timer_clock {
+    display: inline-flex;
+    align-items: baseline;
+    font-family: var(--font-num, 'Space Grotesk', ui-monospace, monospace);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+    font-size: 72px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--text-primary);
+}
+
+.timer_clock_cell {
+    display: inline-block;
+    min-width: 0.62em;
+    text-align: center;
+}
+
+.timer_clock_sep {
+    padding: 0 0.04em;
+    opacity: 0.85;
+    animation: timer_clock_blink 1s steps(1) infinite;
+}
+.timer_clock_digit {
+    display: inline-block;
+}
+.timer_clock_digit_flip {
+    animation: timer_clock_roll 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes timer_clock_roll {
+    0% {
+        transform: translateY(-0.5em);
+        opacity: 0;
+        filter: blur(2px);
+    }
+    60% {
+        filter: blur(0);
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+@keyframes timer_clock_blink {
+    50% {
+        opacity: 0.25;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .timer_clock_digit_flip,
+    .timer_clock_sep {
+        animation: none;
+    }
+}

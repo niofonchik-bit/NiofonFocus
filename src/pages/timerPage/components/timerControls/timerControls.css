@@ -1,0 +1,95 @@
+.timer_controls {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.timer_controls_btn.MuiIconButton-root {
+    border-radius: 999px;
+    transition:
+        transform 0.14s cubic-bezier(0.32, 0.72, 0, 1),
+        box-shadow 0.18s ease;
+}
+.timer_controls_btn_primary.MuiIconButton-root {
+    width: 64px;
+    height: 64px;
+    color: var(--accent-contrast);
+    background: var(--accent-primary);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--accent-primary) 36%, transparent);
+}
+.timer_controls_btn_primary.MuiIconButton-root:hover {
+    background: var(--accent-primary);
+    transform: scale(1.05);
+}
+.timer_controls_btn_primary.MuiIconButton-root:active {
+    transform: scale(0.94);
+}
+.timer_controls_btn_secondary.MuiIconButton-root {
+    width: 52px;
+    height: 52px;
+    color: var(--text-primary);
+    background: var(--surface-secondary);
+    border: 1px solid var(--border-primary);
+    box-shadow: var(--shadow-primary);
+}
+
+/* play↔pause: иконка проявляется с поворотом (key пересоздаёт узел) */
+.timer_controls_main_icon {
+    display: grid;
+    place-items: center;
+    animation: timer_icon_morph 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes timer_icon_morph {
+    0% {
+        opacity: 0;
+        transform: rotate(-90deg) scale(0.6);
+    }
+    100% {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ЗАПУСК: пульсирующее кольцо вокруг главной кнопки */
+.timer_controls_btn_running::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 999px;
+    border: 2px solid color-mix(in srgb, var(--accent-primary) 60%, transparent);
+    animation: timer_pulse 1.8s ease-out infinite;
+}
+@keyframes timer_pulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1.35);
+        opacity: 0;
+    }
+}
+
+/* СБРОС: иконка прокручивается на 360° */
+.timer_controls_btn_secondary.MuiIconButton-root:active .timer_controls_reset_icon {
+    animation: timer_reset_spin 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes timer_reset_spin {
+    from {
+        transform: rotate(0);
+    }
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .timer_controls_main_icon,
+    .timer_controls_btn_running::after,
+    .timer_controls_reset_icon {
+        animation: none;
+    }
+    .timer_controls_btn.MuiIconButton-root {
+        transition: none;
+    }
+}

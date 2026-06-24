@@ -1,0 +1,49 @@
+.timer_header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    animation: timer_header_in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.timer_header_eyebrow {
+    margin: 0 0 6px;
+    color: var(--text-disabled);
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.4;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.timer_header_title {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+}
+
+@keyframes timer_header_in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (max-width: 880px) {
+    .timer_header_title {
+        font-size: 24px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .timer_header {
+        animation: none;
+    }
+}

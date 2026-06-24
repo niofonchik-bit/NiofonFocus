@@ -1,0 +1,32 @@
+.session_dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.session_dots_dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--surface-tertiary);
+    transition:
+        background-color 0.3s ease,
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.3s ease;
+}
+
+.session_dots_dot_on {
+    background: var(--accent-primary);
+    transform: scale(1.15);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--accent-primary) 45%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .session_dots_dot {
+        transition: none;
+    }
+
+    .session_dots_dot_on {
+        transform: none;
+    }
+}

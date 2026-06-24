@@ -1,3 +1,7 @@
+:root {
+    --font-num: "Space Grotesk", ui-monospace, monospace;
+}
+
 /* светлая тема */
 :root[data-theme='light'] {
     color-scheme: light;
