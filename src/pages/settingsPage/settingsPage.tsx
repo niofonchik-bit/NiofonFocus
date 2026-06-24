@@ -101,7 +101,7 @@ function SettingsSwitch({ checked, label, disabled = false, onChange }: Settings
 export default function SettingsPage() {
     const { session } = useAuth();
 
-    const { settings, ready, error, accent, previewAccent, changeSettings } = useSettings();
+    const { settings, ready, error, accent, previewAccent, changeSettings, theme, toggleTheme } = useSettings();
 
     const [draftSettings, setDraftSettings] = React.useState<UserSettings | null>(settings);
 
@@ -297,7 +297,22 @@ export default function SettingsPage() {
                         <section className='settings_page_card'>
                             <h2>Внешний вид</h2>
 
-                            <p className='settings_page_description'>Акцентный цвет интерфейса. Тема переключается в боковом меню.</p>
+                            <p className='settings_page_description'>Акцентный цвет интерфейса и тема оформления</p>
+
+                            <div className='settings_page_row settings_page_theme_row'>
+                                <div className='settings_page_label'>
+                                    <span>Тёмная тема</span>
+
+                                    <small>Переключение оформления интерфейса</small>
+                                </div>
+
+                                <SettingsSwitch
+                                    checked={theme === 'dark'}
+                                    label='Тёмная тема'
+                                    disabled={signingOut}
+                                    onChange={() => void toggleTheme()}
+                                />
+                            </div>
 
                             <div className='settings_page_row'>
                                 <div className='settings_page_label'>

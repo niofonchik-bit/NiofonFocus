@@ -402,6 +402,10 @@
     border-top: 1px solid var(--border-primary);
 }
 
+.settings_page_theme_row {
+    display: none;
+}
+
 .settings_page_label {
     min-width: 0;
     color: var(--text-primary);
@@ -726,5 +730,11 @@
     .settings_page_save_status_text,
     .settings_page_save_status_pulse {
         animation: none !important;
+    }
+}
+
+@media (max-width: 880px) {
+    .settings_page_theme_row {
+        display: flex;
     }
 }

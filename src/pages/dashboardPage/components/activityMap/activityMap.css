@@ -2,6 +2,9 @@
     --cell-size: 15px;
     --cell-gap: 4px;
     --cell-step: calc(var(--cell-size) + var(--cell-gap));
+
+    display: flex;
+    flex-direction: column;
 }
 
 .activity_map_header {
@@ -68,6 +71,8 @@
 /* прокручиваемая область карты */
 
 .activity_map_scroll {
+    flex: 1 1 auto;
+    min-height: 0;
     overflow-x: auto;
     overflow-y: hidden;
     padding-bottom: 6px;

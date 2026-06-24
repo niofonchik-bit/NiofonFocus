@@ -54,6 +54,13 @@
     align-items: stretch;
 }
 
+@media (min-width: 981px) {
+    .dashboard_page_grid > .activity_map,
+    .dashboard_page_grid > .top_streaks {
+        height: clamp(320px, 46vh, 400px);
+    }
+}
+
 /* общая «карточка» секции */
 
 .dashboard_card {

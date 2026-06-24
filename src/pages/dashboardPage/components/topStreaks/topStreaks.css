@@ -28,11 +28,16 @@
 
 .top_streaks_list {
     display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
     flex-direction: column;
     gap: 4px;
     margin: 0;
     padding: 0;
+    overflow-y: auto;
     list-style: none;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--text-disabled) 40%, transparent) transparent;
 }
 
 .top_streaks_item {

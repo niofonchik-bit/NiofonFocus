@@ -16,7 +16,12 @@ interface HoverState {
 }
 
 const BASE_CELL = 15;
+const MAX_CELL = 28; // верхний предел — лечит «слишком большие» в 3 мес
 const CELL_GAP = 4;
+const MONTHS_BLOCK = 22; // высота строки месяцев (16px) + margin-bottom (6px)
+const DESKTOP_QUERY = '(min-width: 981px)';
+
+const TOOLTIP_DELAY = 140;
 
 /** карта активности */
 export default function ActivityMap({ habits }: ActivityMapProps) {
@@ -26,6 +31,7 @@ export default function ActivityMap({ habits }: ActivityMapProps) {
     const [cellSize, setCellSize] = React.useState(BASE_CELL);
 
     const scrollRef = React.useRef<HTMLDivElement | null>(null);
+    const tooltipTimerRef = React.useRef<number | null>(null);
 
     const weeks = React.useMemo(() => ACTIVITY_PERIODS.find((option) => option.value === period)?.weeks ?? 26, [period]);
     const data = React.useMemo(() => getActivityData(habits, weeks), [habits, weeks]);
@@ -39,31 +45,73 @@ export default function ActivityMap({ habits }: ActivityMapProps) {
         }
     }, [weeks]);
 
+    React.useEffect(
+        () => () => {
+            if (tooltipTimerRef.current) {
+                window.clearTimeout(tooltipTimerRef.current);
+            }
+        },
+        [],
+    );
+
     React.useLayoutEffect(() => {
         const node = scrollRef.current;
         if (!node) return;
 
+        const mq = window.matchMedia(DESKTOP_QUERY);
+
         const recompute = () => {
-            const available = node.clientWidth;
-            const fit = Math.floor((available - (data.weeks.length - 1) * CELL_GAP) / data.weeks.length);
-            setCellSize(Math.max(BASE_CELL, fit));
+            const cols = data.weeks.length;
+            const widthFit = Math.floor((node.clientWidth - (cols - 1) * CELL_GAP) / cols);
+
+            // на десктопе высота карточки фиксирована — тянем ячейку под высоту (7 рядов),
+            // по ширине при нехватке места включается горизонтальный скролл
+            let target = widthFit;
+            if (mq.matches) {
+                const gridHeight = node.clientHeight - MONTHS_BLOCK;
+                target = Math.floor((gridHeight - 6 * CELL_GAP) / 7);
+            }
+
+            setCellSize(Math.max(BASE_CELL, Math.min(MAX_CELL, target)));
         };
 
         recompute();
+
         const ro = new ResizeObserver(recompute);
         ro.observe(node);
-        return () => ro.disconnect();
+        mq.addEventListener('change', recompute);
+
+        return () => {
+            ro.disconnect();
+            mq.removeEventListener('change', recompute);
+        };
     }, [data.weeks.length]);
 
-    function showTooltip(target: HTMLElement, day: ActivityDay) {
+    function showTooltip(target: HTMLElement, day: ActivityDay, immediate = false) {
         if (day.future) {
             return;
         }
 
-        setHover({ day, rect: target.getBoundingClientRect() });
+        const rect = target.getBoundingClientRect();
+
+        if (immediate) {
+            setHover({ day, rect });
+            return;
+        }
+
+        if (tooltipTimerRef.current) {
+            window.clearTimeout(tooltipTimerRef.current);
+        }
+
+        tooltipTimerRef.current = window.setTimeout(() => setHover({ day, rect }), TOOLTIP_DELAY);
     }
 
     function hideTooltip() {
+        if (tooltipTimerRef.current) {
+            window.clearTimeout(tooltipTimerRef.current);
+            tooltipTimerRef.current = null;
+        }
+
         setHover(null);
     }
 
@@ -145,7 +193,7 @@ export default function ActivityMap({ habits }: ActivityMapProps) {
                                         aria-label={describeCell(day)}
                                         onMouseEnter={(event) => showTooltip(event.currentTarget, day)}
                                         onMouseLeave={hideTooltip}
-                                        onFocus={(event) => showTooltip(event.currentTarget, day)}
+                                        onFocus={(event) => showTooltip(event.currentTarget, day, true)}
                                         onBlur={hideTooltip}
                                     />
                                 ))}
