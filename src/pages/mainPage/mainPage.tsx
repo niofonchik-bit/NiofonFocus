@@ -1,6 +1,7 @@
 import AnimatedOutlet from '@components/animatedOutlet/animatedOutlet';
 import './mainPage.css';
 import MainMenu from '@components/mainMenu/mainMenu';
+import AppLoader from '@components/appLoader/appLoader';
 
 /** основная страница приложения */
 export default function MainPage() {
@@ -9,7 +10,14 @@ export default function MainPage() {
             <MainMenu />
 
             <main className='main_page_content'>
-                <AnimatedOutlet />
+                <AnimatedOutlet
+                    fallback={
+                        <AppLoader
+                            variant='section'
+                            label='Загрузка…'
+                        />
+                    }
+                />
             </main>
         </div>
     );

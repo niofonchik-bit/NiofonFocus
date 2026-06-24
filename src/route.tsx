@@ -1,15 +1,16 @@
 import type { PageTransitionHandle } from '@components/animatedOutlet/animatedOutlet';
-import AuthPage from '@pages/authPage/authPage';
-import DashboardPage from '@pages/dashboardPage/dashboardPage';
-import HabitPage from '@pages/habitPage/habitPage';
-import MainPage from '@pages/mainPage/mainPage';
-import SettingsPage from '@pages/settingsPage/settingsPage';
+import AppLoader from '@components/appLoader/appLoader';
 import { useAuth } from '@providers/authProvider/authProvider';
 import HabitsProvider from '@providers/habitsProvider/habitsProvider';
 import ProfileProvider from '@providers/profileProvider/profileProvider';
+import { lazy } from 'react';
 import { createBrowserRouter, Navigate, Outlet, useLocation } from 'react-router-dom';
-import AppLoader from '@components/appLoader/appLoader';
-import TimerPage from '@pages/timerPage/timerPage';
+const AuthPage = lazy(() => import('@pages/authPage/authPage'));
+const DashboardPage = lazy(() => import('@pages/dashboardPage/dashboardPage'));
+const HabitPage = lazy(() => import('@pages/habitPage/habitPage'));
+const MainPage = lazy(() => import('@pages/mainPage/mainPage'));
+const SettingsPage = lazy(() => import('@pages/settingsPage/settingsPage'));
+const TimerPage = lazy(() => import('@pages/timerPage/timerPage'));
 
 /** загрузчик страницы */
 function PageLoader() {

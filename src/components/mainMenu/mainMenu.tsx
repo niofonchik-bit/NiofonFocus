@@ -4,7 +4,7 @@ import { mdiCheckAll, mdiCogOutline, mdiFire, mdiHomeOutline, mdiTimerOutline } 
 import { useAuth } from '@providers/authProvider/authProvider';
 import { useHabitStatistics } from '@providers/habitsProvider/habitsProvider';
 import { useProfile } from '@providers/profileProvider/profileProvider';
-import Logo from '@root/assets/logo.png';
+import Logo from '@root/assets/logo.webp';
 import { NavLink } from 'react-router-dom';
 import './mainMenu.css';
 import { getDayWord } from '@utils/plural';

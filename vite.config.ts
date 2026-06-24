@@ -13,6 +13,18 @@ export default defineConfig({
     build: {
         outDir: 'dist',
         emptyOutDir: true,
+        rolldownOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (/[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/.test(id)) return 'react-vendor';
+                        if (/[\\/](@mui|@emotion)[\\/]/.test(id)) return 'mui-vendor';
+                        if (/[\\/]@supabase[\\/]/.test(id)) return 'supabase-vendor';
+                        return 'vendor';
+                    }
+                },
+            },
+        },
     },
     resolve: {
         alias: {
